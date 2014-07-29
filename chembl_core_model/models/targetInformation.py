@@ -151,11 +151,12 @@ class TargetDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     updated_on = ChemblDateField(blank=True, null=True)
     updated_by = ChemblCharField(max_length=100, blank=True, null=True)
     popularity = ChemblPositiveIntegerField(length=9, blank=True, null=True)
-    chembl = models.ForeignKey(ChemblIdLookup, help_text=u'ChEMBL identifier for this target (for use on web interface etc)')
+    chembl = models.ForeignKey(ChemblIdLookup, blank=True, null=False, help_text=u'ChEMBL identifier for this target (for use on web interface etc)') # This combination of null and blank is actually very important!
     insert_date = ChemblDateField(blank=True, null=True, default=datetime.date.today)
     target_parent_type = ChemblCharField(max_length=100, blank=True, null=True, choices=TARGET_PARENT_TYPE_CHOICES)
     in_starlite = ChemblNullableBooleanField(default=False)
     species_group_flag = ChemblNullableBooleanField(help_text=u"Flag to indicate whether the target represents a group of species, rather than an individual species (e.g., 'Bacterial DHFR'). Where set to 1, indicates that any associated target components will be a representative, rather than a comprehensive set.")
+    downgraded = ChemblNullableBooleanField(default=False)
     component_sequences = models.ManyToManyField('ComponentSequences', through="TargetComponents")
     docs = models.ManyToManyField('Docs', through="Assays")
 
@@ -226,6 +227,7 @@ class TargetComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
 
     RELATIONSHIP_CHOICES = (
         ('COMPARATIVE PROTEIN', 'COMPARATIVE PROTEIN'),
+        ('EQUIVALENT PROTEIN', 'EQUIVALENT PROTEIN'),
         ('FUSION PROTEIN', 'FUSION PROTEIN'),
         ('GROUP MEMBER', 'GROUP MEMBER'),
         ('INTERACTING PROTEIN', 'INTERACTING PROTEIN'),
@@ -233,6 +235,7 @@ class TargetComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
         ('RNA', 'RNA'),
         ('RNA SUBUNIT', 'RNA SUBUNIT'),
         ('SINGLE PROTEIN', 'SINGLE PROTEIN'),
+        ('UNCURATED', 'UNCURATED'),
         ('SUBUNIT', 'SUBUNIT'),
         )
 
@@ -241,6 +244,7 @@ class TargetComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
         (1, '1'),
         (2, '2'),
         (3, '3'),
+        (12, '12'),
         )
 
     target = models.ForeignKey(TargetDictionary, db_column='tid', help_text=u'Foreign key to the target_dictionary, indicating the target to which the components belong.')

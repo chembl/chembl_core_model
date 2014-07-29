@@ -51,7 +51,7 @@ class Products(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)
     removed_date = ChemblDateField(blank=True, null=True, help_text=u"The date on which this product was first identified (by ebi parser) as having been removed from the information source. The recording of this date was first initiated on 30-JUN-10. Note that a small number of products are removed from OB, but then re-appear... in these cases this field is re-set to 'null' when the product re-appears..")
     nda_type = ChemblCharField(max_length=10, blank=True, null=True, choices=NDA_TYPE_CHOICES, help_text=u'New Drug Application Type. The type of new drug application approval.  New Drug Applications (NDA or innovator)  are "N".   Abbreviated New Drug Applications (ANDA or generic) are "A".') # TODO: 10 for storing one character sounds strange...
     tmp_ingred_count = ChemblPositiveIntegerField(length=9, blank=True, null=True, help_text=u'Number of ingredients in the product, to show which are combinations')
-    exlude = ChemblNullableBooleanField(help_text=u'Non-FDA products, to be excluded')
+    exclude = ChemblIntegerField(length=1, blank=True, null=True, help_text=u'Non-FDA products, to be excluded')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass

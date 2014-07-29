@@ -145,7 +145,7 @@ class MoleculeDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     chebi_par_id = ChemblPositiveIntegerField(length=9, blank=True, null=True, help_text=u'Preferred ChEBI ID for the compound (where different from assigned)')
     insert_date = ChemblDateField(blank=True, null=True, default=datetime.date.today)
     molfile_update = ChemblDateField(blank=True, null=True)
-    downgraded = ChemblBooleanField(db_index=True, default=False)
+    downgraded = ChemblBooleanField(default=False)
     downgrade_reason = ChemblCharField(max_length=2000, blank=True, null=True)
     replacement_mrn = ChemblPositiveIntegerField(length=9, blank=True, null=True)
     checked_by = ChemblCharField(max_length=2000, blank=True, null=True)
@@ -298,7 +298,7 @@ class MoleculeSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     synonyms = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Synonym for the compound')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        pass
+        unique_together = ( ("molecule", "synonyms", "syn_type"),  )
 
 #-----------------------------------------------------------------------------------------------------------------------
 

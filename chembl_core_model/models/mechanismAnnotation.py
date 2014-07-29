@@ -52,7 +52,7 @@ class DrugMechanism(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     selectivity_comment = ChemblCharField(max_length=100, blank=True, null=True, choices=SELECTIVITY_COMMENT_CHOICES, help_text=u'Additional comments regarding the selectivity of the drug')
     binding_site_comment = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'Additional comments regarding the binding site of the drug')
     curated_by = ChemblCharField(max_length=20, blank=True, null=True)
-    date_added = ChemblDateField(blank=True, null=True, default=datetime.date.today)
+    date_added = ChemblDateField(default=datetime.date.today)
     date_removed = ChemblDateField(blank=True, null=True)
     downgraded = ChemblNullableBooleanField()
     downgrade_reason = ChemblCharField(max_length=200, blank=True, null=True)

@@ -54,7 +54,7 @@ class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     updated_on = ChemblDateField(blank=True, null=True)
     updated_by = ChemblCharField(max_length=100, blank=True, null=True)
     doi = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Digital object identifier for this reference')
-    chembl = models.ForeignKey(ChemblIdLookup, unique=True, help_text=u'ChEMBL identifier for this document (for use on web interface etc)')
+    chembl = models.ForeignKey(ChemblIdLookup, unique=True, blank=True, null=False, help_text=u'ChEMBL identifier for this document (for use on web interface etc)') # This combination of null and blank is actually very important!
     title = ChemblCharField(max_length=500, blank=True, null=True, help_text=u'Document title (e.g., Publication title or description of dataset)')
     doc_type = ChemblCharField(max_length=50, choices=DOC_TYPE_CHOICES, help_text=u'Type of the document (e.g., Publication, Deposited dataset)')
     authors = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'For a deposited dataset, the authors carrying out the screening and/or submitting the dataset.')

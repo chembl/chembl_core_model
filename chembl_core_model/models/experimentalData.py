@@ -136,7 +136,7 @@ class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     a2t_updated_on = ChemblDateField(blank=True, null=True)
     a2t_updated_by = ChemblCharField(max_length=100, blank=True, null=True)
     cell = models.ForeignKey(CellDictionary, blank=True, null=True, help_text=u'Foreign key to cell dictionary. The cell type or cell line used in the assay')
-    bao_format = ChemblCharField(max_length=11, blank=True, null=True, help_text=u'ID for the corresponding format type in BioAssay Ontology (e.g., cell-based, biochemical, organism-based etc)')
+    bao_format = ChemblCharField(max_length=11, db_index=True, blank=True, null=True, help_text=u'ID for the corresponding format type in BioAssay Ontology (e.g., cell-based, biochemical, organism-based etc)')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -184,7 +184,7 @@ class Activities(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
     potential_duplicate = ChemblNullableBooleanField(help_text=u'Indicates whether the value is likely to be a repeat citation of a value reported in a previous ChEMBL paper, rather than a new, independent measurement.') # TODO: this has only two states: (null, 1), change it to (0,1)
     published_relation = ChemblCharField(max_length=50, db_index=True, blank=True, null=True, help_text=u'Symbol constraining the activity value (e.g. >, <, =), as it appears in the original publication')
     original_activity_id = ChemblPositiveIntegerField(length=11, blank=True, null=True) # TODO: should that be FK referencing Activities in future?
-    pchembl_value = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=2, help_text=u'Negative log of selected concentration-response activity values (IC50/EC50/XC50/AC50/Ki/Kd/Potency)')
+    pchembl_value = models.DecimalField(db_index=True, blank=True, null=True, max_digits=4, decimal_places=2, help_text=u'Negative log of selected concentration-response activity values (IC50/EC50/XC50/AC50/Ki/Kd/Potency)')
     bao_endpoint = ChemblCharField(max_length=11, blank=True, null=True, help_text=u'ID for the corresponding result type in BioAssay Ontology (based on standard_type)')
     uo_units = ChemblCharField(max_length=10, blank=True, null=True, help_text=u'ID for the corresponding unit in Unit Ontology (based on standard_units)')
     qudt_units = ChemblCharField(max_length=70, blank=True, null=True, help_text=u'ID for the corresponding unit in QUDT Ontology (based on standard_units)')
