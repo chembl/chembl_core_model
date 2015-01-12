@@ -62,7 +62,7 @@ class CellDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     clo_id = ChemblCharField(max_length=11, blank=True, null=True, help_text=u'ID for the corresponding cell line in Cell Line Ontology')
     efo_id = ChemblCharField(max_length=12, blank=True, null=True, help_text=u'ID for the corresponding cell line in Experimental Factory Ontology')
     cellosaurus_id = ChemblCharField(max_length=15, blank=True, null=True, help_text=u'ID for the corresponding cell line in Cellosaurus Ontology')
-    downgraded = ChemblPositiveIntegerField(length=1, blank=True, null=True, default=0, help_text=u'Indicates the cell line has been removed (if set to 1)')
+    downgraded = ChemblPositiveIntegerField(length=1, blank=False, null=True, default=0, help_text=u'Indicates the cell line has been removed (if set to 1)') # blank is false because it has default value
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("cell_name", "cell_source_tax_id"),  )
@@ -124,7 +124,7 @@ class ComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     organism = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Name of the organism the sequence comes from.')
     db_source = ChemblCharField(max_length=25, blank=True, null=True, choices=DB_SOURCE_CHOICES, help_text=u'The name of the source sequence database from which sequences/accessions are taken. For UniProt proteins, this field indicates whether the sequence is from SWISS-PROT or TREMBL.')
     db_version = ChemblCharField(max_length=10, blank=True, null=True, help_text=u'The version of the source sequence database from which sequences/accession were last updated.')
-    insert_date = ChemblDateField(blank=True, null=True, default=datetime.date.today)
+    insert_date = ChemblDateField(blank=False, null=True, default=datetime.date.today) # blank is false because it has default value
     updated_on = ChemblDateField(blank=True, null=True)
     updated_by = ChemblCharField(max_length=100, blank=True, null=True)
 
@@ -152,7 +152,7 @@ class TargetDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     updated_by = ChemblCharField(max_length=100, blank=True, null=True)
     popularity = ChemblPositiveIntegerField(length=9, blank=True, null=True)
     chembl = models.ForeignKey(ChemblIdLookup, blank=True, null=False, help_text=u'ChEMBL identifier for this target (for use on web interface etc)') # This combination of null and blank is actually very important!
-    insert_date = ChemblDateField(blank=True, null=True, default=datetime.date.today)
+    insert_date = ChemblDateField(blank=False, null=True, default=datetime.date.today) # blank is false because it has default value
     target_parent_type = ChemblCharField(max_length=100, blank=True, null=True, choices=TARGET_PARENT_TYPE_CHOICES)
     in_starlite = ChemblNullableBooleanField(default=False)
     species_group_flag = ChemblNullableBooleanField(help_text=u"Flag to indicate whether the target represents a group of species, rather than an individual species (e.g., 'Bacterial DHFR'). Where set to 1, indicates that any associated target components will be a representative, rather than a comprehensive set.")
