@@ -1,5 +1,6 @@
 __author__ = 'mnowotka'
 
+import datetime
 from django.db import models
 from chembl_core_model.models import *
 from chembl_core_db.db.models.abstractModel import ChemblCoreAbstractModel
@@ -30,6 +31,7 @@ class DrugMechanism(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     SELECTIVITY_COMMENT_CHOICES = (
         ('Broad spectrum', 'Broad spectrum'),
         ('EDG5 less relevant', 'EDG5 less relevant'),
+        ('FGFR 1, 2 + 3', 'FGFR 1, 2 + 3'),
         ('M3 selective', 'M3 selective'),
         ("Non-selective but type 5 receptor is overexpressed in Cushing's disease", "Non-selective but type 5 receptor is overexpressed in Cushing's disease"),
         ('Selective', 'Selective'),
@@ -56,7 +58,6 @@ class DrugMechanism(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     date_removed = ChemblDateField(blank=True, null=True)
     downgraded = ChemblNullableBooleanField()
     downgrade_reason = ChemblCharField(max_length=200, blank=True, null=True)
-    uniprot_accessions = ChemblCharField(max_length=500, blank=True, null=True)
     curator_comment = ChemblCharField(max_length=500, blank=True, null=True)
     curation_status = ChemblCharField(max_length=10, default=u'PARTIAL', choices=CURATION_STATUS_CHOICES, help_text=u'Show whether the curation for this row is complete')
 
@@ -95,7 +96,7 @@ class PredictedBindingDomains(six.with_metaclass(ChemblModelMetaClass, ChemblCor
     predbind_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key.')
     activity = models.ForeignKey(Activities, blank=True, null=True, help_text=u'Foreign key to the activities table, indicating the compound/assay(+target) combination for which this prediction is made.')
     site = models.ForeignKey(BindingSites, blank=True, null=True, help_text=u'Foreign key to the binding_sites table, indicating the binding site (domain) that the compound is predicted to bind to.')
-    prediction_method = ChemblCharField(max_length=50, blank=True, null=True, choices=PREDICTION_METHOD_CHOICES, help_text=u"The method used to assign the binding domain (e.g., 'Single domain' where the protein has only 1 domain, 'Multi domain' where the protein has multiple domains, but only 1 is known to bind small molecules in other proteins).") # TODO: constraint should be added
+    prediction_method = ChemblCharField(max_length=50, blank=True, null=True, choices=PREDICTION_METHOD_CHOICES, help_text=u"The method used to assign the binding domain (e.g., 'Single domain' where the protein has only 1 domain, 'Multi domain' where the protein has multiple domains, but only 1 is known to bind small molecules in other proteins).")
     confidence = ChemblCharField(max_length=10, blank=True, null=True, choices=CONFIDENCE_CHOICES, help_text=u'The level of confidence assigned to the prediction (high where the protein has only 1 domain, medium where the compound has multiple domains, but only 1 known small molecule-binding domain).')
 
     class Meta(ChemblCoreAbstractModel.Meta):

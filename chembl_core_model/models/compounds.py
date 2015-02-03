@@ -32,6 +32,50 @@ class ResearchStem(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMo
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class StructuralAlertSets(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    ALERT_SET_ID_CHOICES = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+        (6, '6'),
+        (7, '7'),
+        (8, '8'),
+        )
+
+    PRIORITY_CHOICES = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+        (6, '6'),
+        (7, '7'),
+        (8, '8'),
+        )
+
+    SET_NAME_CHOICES = (
+        ('BMS', 'BMS'),
+        ('Dundee', 'Dundee'),
+        ('Glaxo', 'Glaxo'),
+        ('Inpharmatica', 'Inpharmatica'),
+        ('LINT', 'LINT'),
+        ('MLSMR', 'MLSMR'),
+        ('PAINS', 'PAINS'),
+        ('SureChEMBL', 'SureChEMBL'),
+        )
+
+    alert_set_id = ChemblPositiveIntegerField(primary_key=True, length=9, choices=ALERT_SET_ID_CHOICES, help_text=u'Unique ID for the structural alert set')
+    set_name = ChemblCharField(max_length=100, unique=True, choices=SET_NAME_CHOICES, help_text=u'Name (or origin) of the structural alert set')
+    priority = ChemblPositiveIntegerField(length=2, choices=PRIORITY_CHOICES, help_text=u'Priority assigned to the structural alert set for display on the ChEMBL interface (priorities >=4 are shown by default).')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 class BioComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     component_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key. Unique identifier for each of the molecular components of biotherapeutics in ChEMBL (e.g., antibody chains, recombinant proteins, synthetic peptides).')
@@ -192,6 +236,29 @@ class ResearchCompanies(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class StructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    ALERT_SET_ID_CHOICES = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+        (6, '6'),
+        (7, '7'),
+        (8, '8'),
+        )
+
+    alert_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Primary key. Unique identifier for the structural alert')
+    alert_set = models.ForeignKey(StructuralAlertSets, choices=ALERT_SET_ID_CHOICES, help_text=u'Foreign key to structural_alert_sets table indicating which set this particular alert comes from')
+    alert_name = ChemblCharField(max_length=100, help_text=u'A name for the structural alert')
+    smarts = ChemblCharField(max_length=4000, help_text=u'SMARTS defining the structural feature that is considered to be an alert')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass #unique_together = ( ("alert_set", "alert_name", "smarts"),  )
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     MED_CHEM_FRIENDLY_CHOICES = (
@@ -222,21 +289,24 @@ class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     psa = ChemblPositiveDecimalField(db_index=True, blank=True, null=True, decimal_places=2, max_digits=9, help_text=u'Polar surface area')
     rtb = ChemblPositiveIntegerField(length=3, db_index=True, blank=True, null=True, help_text=u'Number rotatable bonds')
     ro3_pass = ChemblCharField(max_length=3, blank=True, null=True, choices=MED_CHEM_FRIENDLY_CHOICES, help_text=u'Indicates whether the compound passes the rule-of-three (mw < 300, logP < 3 etc)')
-    num_ro5_violations = ChemblPositiveIntegerField(length=1, db_index=True, blank=True, null=True, choices=NUM_RO5_VIOLATIONS_CHOICES, help_text=u'Number of violations of rule-of-five')
-    med_chem_friendly = ChemblCharField(max_length=3, blank=True, null=True, choices=MED_CHEM_FRIENDLY_CHOICES, help_text=u'Indicates whether the compound is considered Med Chem friendly (Y/N)') # TODO: this is a flag!
+    num_ro5_violations = ChemblPositiveIntegerField(length=1, db_index=True, blank=True, null=True, choices=NUM_RO5_VIOLATIONS_CHOICES, help_text=u"Number of violations of Lipinski's rule-of-five, using HBA and HBD definitions")
+    med_chem_friendly = ChemblCharField(max_length=3, blank=True, null=True, choices=MED_CHEM_FRIENDLY_CHOICES, help_text=u'DEPRECATED. Replaced by new structural alerts tables. Will be removed in future releases.') # TODO: this is a flag!
     acd_most_apka = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'The most acidic pKa calculated using ACDlabs v12.01')
-    acd_most_bpka = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'The most basic pKa calculated using ACDlabs v12.01')
+    acd_most_bpka = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'The most basic pKa calculated using ACDlabs v12.01')
     acd_logp = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'The calculated octanol/water partition coefficient using ACDlabs v12.01')
     acd_logd = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'The calculated octanol/water distribution coefficient at pH7.4 using ACDlabs v12.01')
     molecular_species = ChemblCharField(max_length=50, blank=True, null=True, choices=MOLECULAR_SPECIES_CHOICES, help_text=u'Indicates whether the compound is an acid/base/neutral')
     full_mwt = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'Molecular weight of the full compound including any salts')
     aromatic_rings = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of aromatic rings')
     heavy_atoms = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of heavy (non-hydrogen) atoms')
-    num_alerts = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of structural alerts (as defined by Brenk et al., ChemMedChem 2008)')
+    num_alerts = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of structural alerts used for QED calculation (as defined by Brenk et al., ChemMedChem 2008)')
     qed_weighted = ChemblPositiveDecimalField(blank=True, null=True, max_digits=3, decimal_places=2, help_text=u'Weighted quantitative estimate of drug likeness (as defined by Bickerton et al., Nature Chem 2012)')
     updated_on = ChemblDateField(blank=True, null=True, help_text=u'Shows date properties were last recalculated')
     mw_monoisotopic = ChemblPositiveDecimalField(blank=True, null=True, max_digits=11, decimal_places=4, help_text=u'Monoisotopic parent molecular weight')
     full_molformula = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'Molecular formula for the full compound (including any salt)')
+    hba_lipinski = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u"Number of hydrogen bond acceptors calculated according to Lipinski's original rules (i.e., N + O count))")
+    hbd_lipinski = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u"Number of hydrogen bond donors calculated according to Lipinski's original rules (i.e., NH + OH count)")
+    num_lipinski_ro5_violations = ChemblPositiveIntegerField(length=1, blank=True, null=True, choices=NUM_RO5_VIOLATIONS_CHOICES, help_text=u"Number of violations of Lipinski's rule of five using HBA_LIPINSKI and HBD_LIPINSKI counts")
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -262,7 +332,6 @@ class CompoundRecords(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
     compound_key = ChemblCharField(max_length=250, db_index=True, blank=True, null=True, help_text=u'Key text identifying this compound in the scientific document')
     compound_name = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'Name of this compound recorded in the scientific document')
     filename = ChemblCharField(max_length=250, blank=True, null=True)
-    old_compound_key = ChemblCharField(max_length=250, blank=True, null=True) # TODO: sounds like deprecated
     updated_by = ChemblCharField(max_length=100, blank=True, null=True)
     updated_on = ChemblDateField(blank=True, null=True)
     src = models.ForeignKey(Source, help_text=u'Foreign key to source table')
@@ -343,7 +412,7 @@ class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
 class MoleculeHierarchy(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     molecule = models.OneToOneField(MoleculeDictionary, primary_key=True, db_column='molregno', help_text=u'Foreign key to compounds table. This field holds a list of all of the ChEMBL compounds with associated data (e.g., activity information, approved drugs). Parent compounds that are generated only by removing salts, and which do not themselves have any associated data will not appear here.')
-    parent_molecule = models.ForeignKey(MoleculeDictionary, blank=True, null=True, related_name='parent', db_column='parent_molregno', help_text=u'Represents parent compound of molregno in first field (i.e., generated by removing salts). Where molregno and parent_molregno are same, the initial ChEMBL compound did not contain a salt component, or else could not be further processed for various reasons (e.g., inorganic mixture). Compounds which are only generated by removing salts will appear in this field only. Those which, themselves, have any associated data (e.g., activity data) or are launched drugs will also appear in the molregno field.')
+    parent_molecule = models.ForeignKey(MoleculeDictionary, db_index=True, blank=True, null=True, related_name='parent', db_column='parent_molregno', help_text=u'Represents parent compound of molregno in first field (i.e., generated by removing salts). Where molregno and parent_molregno are same, the initial ChEMBL compound did not contain a salt component, or else could not be further processed for various reasons (e.g., inorganic mixture). Compounds which are only generated by removing salts will appear in this field only. Those which, themselves, have any associated data (e.g., activity data) or are launched drugs will also appear in the molregno field.')
     active_molecule = models.ForeignKey(MoleculeDictionary, blank=True, null=True, related_name='active', db_column='active_molregno', help_text=u"Where a compound is a pro-drug, this represents the active metabolite of the 'dosed' compound given by parent_molregno. Where parent_molregno and active_molregno are the same, the compound is not currently known to be a pro-drug. ")
 
     class Meta(ChemblCoreAbstractModel.Meta):
@@ -368,10 +437,22 @@ class Biotherapeutics(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
 
     molecule = models.OneToOneField(MoleculeDictionary, primary_key=True, db_column='molregno', help_text=u'Foreign key to molecule_dictionary')
     description = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Description of the biotherapeutic.')
+    helm_notation = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'Sequence notation generated according to the HELM standard (http://www.openhelm.org/home). Currently for peptides only')
     bio_component_sequences = models.ManyToManyField('BioComponentSequences', through="BiotherapeuticComponents", null=True, blank=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+class CompoundStructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    cpd_str_alert_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Primary key.')
+    molecule = models.ForeignKey(MoleculeDictionary, db_column='molregno', help_text=u'Foreign key to the molecule_dictionary. The compound for which the structural alert has been found.')
+    alert = models.ForeignKey(StructuralAlerts, help_text=u'Foreign key to the structural_alerts table. The particular alert that has been identified in this compound.')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        unique_together = ( ("molecule", "alert"),  )
 
 #-----------------------------------------------------------------------------------------------------------------------
 

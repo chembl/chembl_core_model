@@ -167,7 +167,6 @@ class Activities(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
     doc = models.ForeignKey(Docs, blank=True, null=True, help_text=u'Foreign key to documents table (for quick lookup of publication details - can also link to documents through compound_records or assays table)')
     record = models.ForeignKey(CompoundRecords, help_text=u'Foreign key to the compound_records table (containing information on the compound tested)')
     molecule = models.ForeignKey(MoleculeDictionary, blank=True, null=True, db_column='molregno', help_text=u'Foreign key to compounds table (for quick lookup of compound structure - can also link to compounds through compound_records table)')
-    activity_type = ChemblCharField(max_length=250, db_index=True, blank=True, null=True, help_text=u'Deprecated. Use published_activity_type or standard_type columns') # TODO: Deprecated
     standard_relation = ChemblCharField(max_length=50, db_index=True, blank=True, null=True, novalidate=True, choices=STANDARD_RELATION_CHOICES, help_text=u'Symbol constraining the activity value (e.g. >, <, =)')
     published_value = ChemblNoLimitDecimalField(db_index=True, blank=True, null=True, help_text=u'Datapoint value as it appears in the original publication.') # TODO: NUMBER in Oracle
     published_units = ChemblCharField(max_length=100, db_index=True, blank=True, null=True, help_text=u'Units of measurement as they appear in the original publication')

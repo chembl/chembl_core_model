@@ -22,6 +22,7 @@ class ChemblIdLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
 
     ENTITY_TYPE_CHOICES = (
         ('ASSAY', 'ASSAY'),
+        ('CELL', 'CELL'),
         ('COMPOUND', 'COMPOUND'),
         ('DOCUMENT', 'DOCUMENT'),
         ('TARGET', 'TARGET'),
@@ -34,9 +35,9 @@ class ChemblIdLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
         )
 
     chembl_id = ChemblCharField(primary_key=True, max_length=20, help_text=u'ChEMBL identifier')
-    entity_type = ChemblCharField(max_length=50, blank=True, null=True, choices=ENTITY_TYPE_CHOICES, help_text=u'Type of entity (e.g., COMPOUND, ASSAY, TARGET)')
-    entity_id = ChemblIntegerField(length=9, blank=True, null=True, help_text=u'Primary key for that entity in corresponding table (e.g., molregno for compounds, tid for targets)')
-    status = ChemblCharField(max_length=10, blank=False, null=True, default=u'ACTIVE', choices=STATUS_CHOICES, help_text=u'Indicates whether the status of the entity within the database - ACTIVE, INACTIVE (downgraded), OBS (obsolete/removed).') # blank is false because it has default value
+    entity_type = ChemblCharField(max_length=50, choices=ENTITY_TYPE_CHOICES, help_text=u'Type of entity (e.g., COMPOUND, ASSAY, TARGET)')
+    entity_id = ChemblIntegerField(length=9, help_text=u'Primary key for that entity in corresponding table (e.g., molregno for compounds, tid for targets)')
+    status = ChemblCharField(max_length=10, default=u'ACTIVE', choices=STATUS_CHOICES, help_text=u'Indicates whether the status of the entity within the database - ACTIVE, INACTIVE (downgraded), OBS (obsolete/removed).')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("entity_id", "entity_type"),  )

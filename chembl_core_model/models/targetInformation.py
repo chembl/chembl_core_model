@@ -51,24 +51,6 @@ class ProteinFamilyClassification(six.with_metaclass(ChemblModelMetaClass, Chemb
 
 #-----------------------------------------------------------------------------------------------------------------------
 
-class CellDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
-    cell_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key. Unique identifier for each cell line in the target_dictionary.')
-    cell_name = ChemblCharField(max_length=50, help_text=u'Name of each cell line (as used in the target_dicitonary pref_name).')
-    cell_description = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Longer description (where available) of the cell line.')
-    cell_source_tissue = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Tissue from which the cell line is derived, where known.')
-    cell_source_organism = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Name of organism from which the cell line is derived.')
-    cell_source_tax_id = ChemblPositiveIntegerField(length=11, blank=True, null=True, help_text=u'NCBI tax ID of the organism from which the cell line is derived.') # TODO: should be FK to organism class
-    clo_id = ChemblCharField(max_length=11, blank=True, null=True, help_text=u'ID for the corresponding cell line in Cell Line Ontology')
-    efo_id = ChemblCharField(max_length=12, blank=True, null=True, help_text=u'ID for the corresponding cell line in Experimental Factory Ontology')
-    cellosaurus_id = ChemblCharField(max_length=15, blank=True, null=True, help_text=u'ID for the corresponding cell line in Cellosaurus Ontology')
-    downgraded = ChemblPositiveIntegerField(length=1, blank=False, null=True, default=0, help_text=u'Indicates the cell line has been removed (if set to 1)') # blank is false because it has default value
-
-    class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("cell_name", "cell_source_tax_id"),  )
-
-#-----------------------------------------------------------------------------------------------------------------------
-
 class ProteinClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     CLASS_LEVEL_CHOICES = (
@@ -89,9 +71,9 @@ class ProteinClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreA
     short_name = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Short/abbreviated name for this protein family (not necessarily unique).')
     protein_class_desc = ChemblCharField(max_length=410, help_text=u'Concatenated description of each classification for searching purposes etc.')
     definition = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'Definition of the protein family.')
-    downgraded = ChemblNullableBooleanField()
+    downgraded = ChemblBooleanField(default=False)
     replaced_by = ChemblPositiveIntegerField(length=9, blank=True, null=True)
-    class_level = ChemblPositiveIntegerField(length=9, blank=True, null=True, choices=CLASS_LEVEL_CHOICES)
+    class_level = ChemblPositiveIntegerField(length=9, choices=CLASS_LEVEL_CHOICES, help_text=u'Level of the class within the hierarchy (level 1 = top level classification)')
     sort_order = ChemblPositiveIntegerField(length=2, blank=True, null=True)
     component_sequences = models.ManyToManyField('ComponentSequences', through="ComponentClass", null=True, blank=True)
 
@@ -145,18 +127,16 @@ class TargetDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
 
     tid = ChemblAutoField(primary_key=True, length=9, help_text=u'Unique ID for the target')
     target_type = models.ForeignKey(TargetType, blank=True, null=True, db_column='target_type', help_text=u'Describes whether target is a protein, an organism, a tissue etc. Foreign key to TARGET_TYPE table.')
-    pref_name = ChemblCharField(max_length=200, db_index=True, blank=True, null=True, help_text=u'Preferred target name: manually curated')
+    pref_name = ChemblCharField(max_length=200, db_index=True, help_text=u'Preferred target name: manually curated')
     tax_id = ChemblPositiveIntegerField(length=11, db_index=True, blank=True, null=True, help_text=u'NCBI taxonomy id of target') # TODO: should be FK to OrganismClass.tax_id
     organism = ChemblCharField(max_length=150, db_index=True, blank=True, null=True, help_text=u'Source organism of molecuar target or tissue, or the target organism if compound activity is reported in an organism rather than a protein or tissue')
     updated_on = ChemblDateField(blank=True, null=True)
     updated_by = ChemblCharField(max_length=100, blank=True, null=True)
-    popularity = ChemblPositiveIntegerField(length=9, blank=True, null=True)
     chembl = models.ForeignKey(ChemblIdLookup, blank=True, null=False, help_text=u'ChEMBL identifier for this target (for use on web interface etc)') # This combination of null and blank is actually very important!
     insert_date = ChemblDateField(blank=False, null=True, default=datetime.date.today) # blank is false because it has default value
     target_parent_type = ChemblCharField(max_length=100, blank=True, null=True, choices=TARGET_PARENT_TYPE_CHOICES)
-    in_starlite = ChemblNullableBooleanField(default=False)
-    species_group_flag = ChemblNullableBooleanField(help_text=u"Flag to indicate whether the target represents a group of species, rather than an individual species (e.g., 'Bacterial DHFR'). Where set to 1, indicates that any associated target components will be a representative, rather than a comprehensive set.")
-    downgraded = ChemblNullableBooleanField(default=False)
+    species_group_flag = ChemblBooleanField(default=False, help_text=u"Flag to indicate whether the target represents a group of species, rather than an individual species (e.g., 'Bacterial DHFR'). Where set to 1, indicates that any associated target components will be a representative, rather than a comprehensive set.")
+    downgraded = ChemblBooleanField(default=False, help_text=u'Flag to indicate that the target is downgraded (if equal to 1)')
     component_sequences = models.ManyToManyField('ComponentSequences', through="TargetComponents")
     docs = models.ManyToManyField('Docs', through="Assays")
 
@@ -194,6 +174,26 @@ class ComponentSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("component", "component_synonym", "syn_type"),  )
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+class CellDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    cell_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key. Unique identifier for each cell line in the target_dictionary.')
+    cell_name = ChemblCharField(max_length=50, help_text=u'Name of each cell line (as used in the target_dicitonary pref_name).')
+    cell_description = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Longer description (where available) of the cell line.')
+    cell_source_tissue = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Tissue from which the cell line is derived, where known.')
+    cell_source_organism = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Name of organism from which the cell line is derived.')
+    cell_source_tax_id = ChemblPositiveIntegerField(length=11, blank=True, null=True, help_text=u'NCBI tax ID of the organism from which the cell line is derived.') # TODO: should be FK to organism class
+    clo_id = ChemblCharField(max_length=11, blank=True, null=True, help_text=u'ID for the corresponding cell line in Cell Line Ontology')
+    efo_id = ChemblCharField(max_length=12, blank=True, null=True, help_text=u'ID for the corresponding cell line in Experimental Factory Ontology')
+    cellosaurus_id = ChemblCharField(max_length=15, blank=True, null=True, help_text=u'ID for the corresponding cell line in Cellosaurus Ontology')
+    downgraded = ChemblNullableBooleanField(default=False, help_text=u'Indicates the cell line has been removed (if set to 1)')
+    cl_lincs_id = ChemblCharField(max_length=8, blank=True, null=True, help_text=u'Cell ID used in LINCS (Library of Integrated Network-based Cellular Signatures)')
+    chembl = models.ForeignKey(ChemblIdLookup, blank=True, null=True, help_text=u'ChEMBL identifier for the cell (used in web interface etc)')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        unique_together = ( ("cell_name", "cell_source_tax_id"),  )
 
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -249,10 +249,10 @@ class TargetComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
 
     target = models.ForeignKey(TargetDictionary, db_column='tid', help_text=u'Foreign key to the target_dictionary, indicating the target to which the components belong.')
     component = models.ForeignKey(ComponentSequences, help_text=u'Foreign key to the component_sequences table, indicating which components belong to the target.')
-    relationship = ChemblCharField(max_length=20, default=u'SUBUNIT', choices=RELATIONSHIP_CHOICES) # TODO: constraint or lookup AND default may be wrong!!!
+    relationship = ChemblCharField(max_length=20, default=u'UNCURATED', choices=RELATIONSHIP_CHOICES)
     stoichiometry = ChemblPositiveIntegerField(length=3, blank=True, null=True, choices=STOICHIOMETRY_CHOICES)
     targcomp_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key.')
-    homologue = ChemblPositiveIntegerField(length=1, default=0, choices=HOMOLOGUE_CHOICES, help_text=u'Indicates that the given component is a homologue of the correct component (e.g., from a different species) when set to 1. This may be the case if the sequence for the correct protein/nucleic acid cannot be found in sequence databases.')
+    homologue = ChemblPositiveIntegerField(length=1, default=0, choices=HOMOLOGUE_CHOICES, help_text=u'Indicates that the given component is a homologue of the correct component (e.g., from a different species) when set to 1. This may be the case if the sequence for the correct protein/nucleic acid cannot be found in sequence databases. A value of 2 indicates that the sequence given is a representative of a species group, e.g., an E. coli protein to represent the target of a broad-spectrum antibiotic.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
