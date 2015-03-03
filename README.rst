@@ -1,6 +1,3 @@
-.. image:: https://badge.waffle.io/chembl/chembl_core_model.png?label=ready&title=Ready 
- :target: https://waffle.io/chembl/chembl_core_model
- :alt: 'Stories in Ready'
 chembl_core_model
 ======
 
@@ -11,6 +8,10 @@ chembl_core_model
 .. image:: https://pypip.in/d/chembl_core_model/badge.png
     :target: https://crate.io/packages/chembl_core_model/
     :alt: Number of PyPI downloads
+    
+.. image:: https://badge.waffle.io/chembl/chembl_core_model.png?label=ready&title=Ready 
+ :target: https://waffle.io/chembl/chembl_core_model
+ :alt: 'Stories in Ready'    
 
 This is chembl_core_model package developed at Chembl group, EMBL-EBI, Cambridge, UK.
 
