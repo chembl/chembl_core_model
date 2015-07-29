@@ -1,23 +1,23 @@
 chembl_core_model
 ======
 
-.. image:: https://pypip.in/version/chembl_core_model/badge.svg
+.. image:: https://img.shields.io/pypi/v/chembl_core_model.svg
     :target: https://pypi.python.org/pypi/chembl_core_model/
     :alt: Latest Version
 
-.. image:: https://pypip.in/download/chembl_core_model/badge.svg
+.. image:: https://img.shields.io/pypi/dm/chembl_core_model.svg
     :target: https://pypi.python.org/pypi/chembl_core_model/
     :alt: Downloads
 
-.. image:: https://pypip.in/py_versions/chembl_core_model/badge.svg
+.. image:: https://img.shields.io/pypi/pyversions/chembl_core_model.svg
     :target: https://pypi.python.org/pypi/chembl_core_model/
     :alt: Supported Python versions
 
-.. image:: https://pypip.in/status/chembl_core_model/badge.svg
+.. image:: https://img.shields.io/pypi/status/chembl_core_model.svg
     :target: https://pypi.python.org/pypi/chembl_core_model/
     :alt: Development Status
 
-.. image:: https://pypip.in/license/chembl_core_model/badge.svg
+.. image:: https://img.shields.io/pypi/l/chembl_core_model.svg
     :target: https://pypi.python.org/pypi/chembl_core_model/
     :alt: License
     
