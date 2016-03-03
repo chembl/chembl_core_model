@@ -82,6 +82,38 @@ class ProteinClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreA
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class GoClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+
+    ASPECT_CHOICES = (
+        ('C', 'C'),
+        ('F', 'F'),
+        ('P', 'P'),
+        )
+
+    CLASS_LEVEL_CHOICES = (
+        (0, '0'),
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+        (6, '6'),
+        (7, '7'),
+        )
+
+    go_id = ChemblCharField(primary_key=True, max_length=10, help_text=u'Primary key. Gene Ontology identifier for the GO slim term')
+    parent_go_id = ChemblCharField(max_length=10, blank=True, null=True, help_text=u'Gene Ontology identifier for the parent of this GO term in the ChEMBL Drug Target GO slim')
+    pref_name = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Gene Ontology name')
+    class_level = ChemblPositiveIntegerField(length=1, blank=True, null=True, choices=CLASS_LEVEL_CHOICES, help_text=u'Indicates the level of the term in the slim (L1 = highest)')
+    aspect = ChemblCharField(max_length=1, blank=True, null=True, choices=ASPECT_CHOICES, help_text=u'Indicates which aspect of the Gene Ontology the term belongs to (F = molecular function, P = biological process, C = cellular component)')
+    path = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Indicates the full path to this term in the GO slim')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 class ComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     COMPONENT_TYPE_CHOICES = (
@@ -91,9 +123,9 @@ class ComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
         )
 
     DB_SOURCE_CHOICES = (
-        ('Manual', 'Manual'),
         ('SWISS-PROT', 'SWISS-PROT'),
         ('TREMBL', 'TREMBL'),
+        ('Manual', 'Manual'),
         )
 
     component_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key. Unique identifier for the component.')
@@ -217,6 +249,18 @@ class ProteinClassSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class ComponentGo(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+
+    comp_go_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Primary key')
+    component = models.ForeignKey(ComponentSequences, help_text=u'Foreign key to COMPONENT_SEQUENCES table. The protein component this GO term applies to')
+    go = models.ForeignKey(GoClassification, help_text=u'Foreign key to the GO_CLASSIFICATION table. The GO term that this protein is mapped to')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        unique_together = ( ("component", "go"),  )
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 class TargetComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     HOMOLOGUE_CHOICES = (
@@ -226,17 +270,15 @@ class TargetComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
         )
 
     RELATIONSHIP_CHOICES = (
-        ('COMPARATIVE PROTEIN', 'COMPARATIVE PROTEIN'),
-        ('EQUIVALENT PROTEIN', 'EQUIVALENT PROTEIN'),
-        ('FUSION PROTEIN', 'FUSION PROTEIN'),
-        ('GROUP MEMBER', 'GROUP MEMBER'),
-        ('INTERACTING PROTEIN', 'INTERACTING PROTEIN'),
-        ('PROTEIN SUBUNIT', 'PROTEIN SUBUNIT'),
-        ('RNA', 'RNA'),
-        ('RNA SUBUNIT', 'RNA SUBUNIT'),
         ('SINGLE PROTEIN', 'SINGLE PROTEIN'),
+        ('PROTEIN SUBUNIT', 'PROTEIN SUBUNIT'),
+        ('RNA SUBUNIT', 'RNA SUBUNIT'),
+        ('GROUP MEMBER', 'GROUP MEMBER'),
+        ('RNA', 'RNA'),
+        ('INTERACTING PROTEIN', 'INTERACTING PROTEIN'),
+        ('COMPARATIVE PROTEIN', 'COMPARATIVE PROTEIN'),
+        ('FUSION PROTEIN', 'FUSION PROTEIN'),
         ('UNCURATED', 'UNCURATED'),
-        ('SUBUNIT', 'SUBUNIT'),
         )
 
     STOICHIOMETRY_CHOICES = (

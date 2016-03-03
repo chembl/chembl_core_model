@@ -73,10 +73,36 @@ class DataValidityLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class BioassayOntology(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+
+    TERM_TYPE_CHOICES = (
+        ('ASSAY_FORMAT', 'ASSAY_FORMAT'),
+        ('ASSAY_TYPE', 'ASSAY_TYPE'),
+        ('ENDPOINT', 'ENDPOINT'),
+        ('ENDPOINT_CORRELATION', 'ENDPOINT_CORRELATION'),
+        ('ENDPOINT_CURVE', 'ENDPOINT_CURVE'),
+        ('ENDPOINT_DIRECTION', 'ENDPOINT_DIRECTION'),
+        ('ENDPOINT_MOA', 'ENDPOINT_MOA'),
+        ('ENDPOINT_PUBCHEM', 'ENDPOINT_PUBCHEM'),
+        ('ENDPOINT_RESULT', 'ENDPOINT_RESULT'),
+        )
+
+    bao_id = ChemblCharField(primary_key=True, max_length=11, help_text=u'Bioassay Ontology identifier (BAO version 2.0)')
+    label = ChemblCharField(max_length=100, help_text=u'Bioassay Ontology label for the term (BAO version 2.0)')
+    term_type = ChemblCharField(max_length=20, blank=True, null=True, choices=TERM_TYPE_CHOICES)
+    bao_version = ChemblCharField(max_length=10)
+    parent_bao_id = ChemblCharField(max_length=20, blank=True, null=True)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 class ParameterType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
 
-    parameter_type = ChemblCharField(primary_key=True, max_length=20, help_text=u'Short name for the type of parameter associated with an assay')
+    parameter_type = ChemblCharField(primary_key=True, max_length=40, help_text=u'Short name for the type of parameter associated with an assay')
     description = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Description of the parameter type')
 
     class Meta(ChemblCoreAbstractModel.Meta):
@@ -180,7 +206,7 @@ class Activities(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
     published_type = ChemblCharField(max_length=250, db_index=True, blank=True, null=True, help_text=u'Type of end-point measurement: e.g. IC50, LD50, %inhibition etc, as it appears in the original publication')
     manual_curation_flag = ChemblPositiveIntegerField(length=1, blank=False, null=True, default=0, choices=MANUAL_CURATION_FLAG_CHOICES) # blank is false because it has default value
     data_validity_comment = models.ForeignKey(DataValidityLookup, blank=True, null=True, db_column='data_validity_comment', help_text=u"Comment reflecting whether the values for this activity measurement are likely to be correct - one of 'Manually validated' (checked original paper and value is correct), 'Potential author error' (value looks incorrect but is as reported in the original paper), 'Outside typical range' (value seems too high/low to be correct e.g., negative IC50 value), 'Non standard unit type' (units look incorrect for this activity type).")
-    potential_duplicate = ChemblNullableBooleanField(help_text=u'Indicates whether the value is likely to be a repeat citation of a value reported in a previous ChEMBL paper, rather than a new, independent measurement.') # TODO: this has only two states: (null, 1), change it to (0,1)
+    potential_duplicate = ChemblBooleanField(help_text=u'When set to 1, indicates that the value is likely to be a repeat citation of a value reported in a previous ChEMBL paper, rather than a new, independent measurement.') # CHECK TYPE
     published_relation = ChemblCharField(max_length=50, db_index=True, blank=True, null=True, help_text=u'Symbol constraining the activity value (e.g. >, <, =), as it appears in the original publication')
     original_activity_id = ChemblPositiveIntegerField(length=11, blank=True, null=True) # TODO: should that be FK referencing Activities in future?
     pchembl_value = models.DecimalField(db_index=True, blank=True, null=True, max_digits=4, decimal_places=2, help_text=u'Negative log of selected concentration-response activity values (IC50/EC50/XC50/AC50/Ki/Kd/Potency)')

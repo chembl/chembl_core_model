@@ -10,5 +10,5 @@ from chembl_core_model.models.bindingSiteInformation import *
 from chembl_core_model.models.experimentalData import *
 from chembl_core_model.models.approvedDrugData import *
 from chembl_core_model.models.mechanismAnnotation import *
-
+from chembl_core_model.models.drugMetabolismData import *
 

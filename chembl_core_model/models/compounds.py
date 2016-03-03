@@ -261,10 +261,6 @@ class StructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
 
 class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
-    MED_CHEM_FRIENDLY_CHOICES = (
-        ('Y', 'Yes'),
-        ('N', 'No'),
-        )
 
     MOLECULAR_SPECIES_CHOICES = (
         ('ACID', 'ACID'),
@@ -281,6 +277,11 @@ class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
         (4, '4'),
         )
 
+    RO3_PASS_CHOICES = (
+        ('Y', 'Y'),
+        ('N', 'N'),
+        )
+
     molecule = models.OneToOneField(MoleculeDictionary, primary_key=True, db_column='molregno', help_text=u'Foreign key to compounds table (compound structure)')
     mw_freebase = ChemblPositiveDecimalField(db_index=True, blank=True, null=True, decimal_places=2, max_digits=9, help_text=u'Molecular weight of parent compound')
     alogp = models.DecimalField(db_index=True, blank=True, null=True, decimal_places=2, max_digits=9, help_text=u'Calculated ALogP')
@@ -288,9 +289,8 @@ class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     hbd = ChemblPositiveIntegerField(length=3, db_index=True, blank=True, null=True, help_text=u'Number hydrogen bond donors')
     psa = ChemblPositiveDecimalField(db_index=True, blank=True, null=True, decimal_places=2, max_digits=9, help_text=u'Polar surface area')
     rtb = ChemblPositiveIntegerField(length=3, db_index=True, blank=True, null=True, help_text=u'Number rotatable bonds')
-    ro3_pass = ChemblCharField(max_length=3, blank=True, null=True, choices=MED_CHEM_FRIENDLY_CHOICES, help_text=u'Indicates whether the compound passes the rule-of-three (mw < 300, logP < 3 etc)')
+    ro3_pass = ChemblCharField(max_length=3, blank=True, null=True, choices=RO3_PASS_CHOICES, help_text=u'Indicates whether the compound passes the rule-of-three (mw < 300, logP < 3 etc)')
     num_ro5_violations = ChemblPositiveIntegerField(length=1, db_index=True, blank=True, null=True, choices=NUM_RO5_VIOLATIONS_CHOICES, help_text=u"Number of violations of Lipinski's rule-of-five, using HBA and HBD definitions")
-    med_chem_friendly = ChemblCharField(max_length=3, blank=True, null=True, choices=MED_CHEM_FRIENDLY_CHOICES, help_text=u'DEPRECATED. Replaced by new structural alerts tables. Will be removed in future releases.') # TODO: this is a flag!
     acd_most_apka = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'The most acidic pKa calculated using ACDlabs v12.01')
     acd_most_bpka = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'The most basic pKa calculated using ACDlabs v12.01')
     acd_logp = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'The calculated octanol/water partition coefficient using ACDlabs v12.01')
@@ -299,7 +299,7 @@ class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     full_mwt = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'Molecular weight of the full compound including any salts')
     aromatic_rings = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of aromatic rings')
     heavy_atoms = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of heavy (non-hydrogen) atoms')
-    num_alerts = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of structural alerts used for QED calculation (as defined by Brenk et al., ChemMedChem 2008)')
+    num_alerts = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of structural alerts for QED calculation (as defined by Brenk et al., ChemMedChem 2008)')
     qed_weighted = ChemblPositiveDecimalField(blank=True, null=True, max_digits=3, decimal_places=2, help_text=u'Weighted quantitative estimate of drug likeness (as defined by Bickerton et al., Nature Chem 2012)')
     updated_on = ChemblDateField(blank=True, null=True, help_text=u'Shows date properties were last recalculated')
     mw_monoisotopic = ChemblPositiveDecimalField(blank=True, null=True, max_digits=11, decimal_places=4, help_text=u'Monoisotopic parent molecular weight')
@@ -347,68 +347,6 @@ class CompoundRecords(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
 
 #-----------------------------------------------------------------------------------------------------------------------
 
-class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
-    AVAILABILITY_TYPE_CHOICES = (
-        (-1, '-1'),
-        (0, '0'),
-        (1, '1'),
-        (2, '2'),
-        )
-
-    CHIRALITY_CHOICES = (
-        (-1, '-1'),
-        (0, '0'),
-        (1, '1'),
-        (2, '2'),
-        )
-
-    MAX_PHASE_CHOICES = (
-        (0, '0'),
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        )
-
-    MOLECULE_TYPE_CHOICES = (
-        ('Antibody', 'Antibody'),
-        ('Cell', 'Cell'),
-        ('Enzyme', 'Enzyme'),
-        ('Oligonucleotide', 'Oligonucleotide'),
-        ('Oligosaccharide', 'Oligosaccharide'),
-        ('Protein', 'Protein'),
-        ('Small molecule', 'Small molecule'),
-        ('Unclassified', 'Unclassified'),
-        ('Unknown', 'Unknown'),
-        )
-
-    record = models.OneToOneField(CompoundRecords, primary_key=True)
-    max_phase = ChemblPositiveIntegerField(length=1, db_index=True, default=0, choices=MAX_PHASE_CHOICES, help_text=u'Maximum phase of development reached for the compound (4 = approved). Null where max phase has not yet been assigned.')
-    withdrawn_status = ChemblCharField(max_length=10, blank=True, null=True)
-    molecule_type = ChemblCharField(max_length=30, blank=True, null=True, choices=MOLECULE_TYPE_CHOICES, help_text=u'Type of molecule (Small molecule, Protein, Antibody, Oligosaccharide, Oligonucleotide, Cell, Unknown)')
-    first_approval = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'Earliest known approval year for the molecule') # TODO: should be date!
-    oral = ChemblBooleanField(default=False, help_text=u'Indicates whether the drug is known to be administered orally.')
-    parenteral = ChemblBooleanField(default=False, help_text=u'Indicates whether the drug is known to be administered parenterally')
-    topical = ChemblBooleanField(default=False, help_text=u'Indicates whether the drug is known to be administered topically.')
-    black_box_warning = ChemblNullBooleanField(default=0, help_text=u'Indicates that the drug has a black box warning')
-    first_in_class = ChemblNullBooleanField(default=(-1), help_text=u'Indicates whether this is known to be the first compound of its class (e.g., acting on a particular target).')
-    chirality = ChemblIntegerField(length=1, default=(-1), choices=CHIRALITY_CHOICES, help_text=u'Shows whether a drug is dosed as a racemic mixture (0), single stereoisomer (1) or is an achiral molecule (2)')
-    prodrug = ChemblBooleanField(default=False, help_text=u'Indicates that the molecule is a pro-drug (see molecule hierarchy for active component, where known)')
-    therapeutic_flag = ChemblBooleanField(db_index=True, default=False, help_text=u'Indicates that a drug has a therapeutic application (as opposed to e.g., an imaging agent, additive etc).')
-    natural_product = ChemblNullBooleanField(default=(-1), help_text=u'Indicates whether the compound is natural product-derived (currently curated only for drugs)')
-    inorganic_flag = ChemblNullBooleanField(default=0, help_text=u'Indicates whether the molecule is inorganic (i.e., containing only metal atoms and <2 carbon atoms)')
-    applicants = ChemblCharField(max_length=1000, blank=True, null=True)
-    usan_stem = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Where the compound has been assigned a USAN name, this indicates the stem, as described in the USAN_STEM table.')
-    usan_year = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'The year in which the application for a USAN/INN name was made')
-    availability_type = ChemblIntegerField(length=1, blank=True, null=True, choices=AVAILABILITY_TYPE_CHOICES, help_text=u'The availability type for the drug (0 = discontinued, 1 = prescription only, 2 = over the counter)')
-    usan_substem = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Where the compound has been assigned a USAN name, this indicates the substem')
-    indication_class = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Indication class(es) assigned to a drug in the USP dictionary')
-    usan_stem_definition = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Definition of the USAN stem')
-    polymer_flag = ChemblNullableBooleanField(help_text=u'Indicates whether a molecule is a small molecule polymer (e.g., polistyrex)')
-
-#-----------------------------------------------------------------------------------------------------------------------
-
 class MoleculeHierarchy(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     molecule = models.OneToOneField(MoleculeDictionary, primary_key=True, db_column='molregno', help_text=u'Foreign key to compounds table. This field holds a list of all of the ChEMBL compounds with associated data (e.g., activity information, approved drugs). Parent compounds that are generated only by removing salts, and which do not themselves have any associated data will not appear here.')
@@ -430,6 +368,21 @@ class MoleculeSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("molecule", "synonyms", "syn_type"),  )
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+class RecordSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    rec_syn_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key.')
+    record = models.ForeignKey(CompoundRecords)
+    record_synonym = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Synonym for the compound record')
+    syn_type = ChemblCharField(max_length=50, help_text=u'Type of name/synonym (e.g., TRADE_NAME, RESEARCH_CODE, USAN)')
+    res_stem = models.ForeignKey(ResearchStem, blank=True, null=True, help_text=u'Foreign key to the research_stem table. Where a synonym is a research code, this links to further information about the company associated with that code.')
+    canonical_synonym = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Canonical synonym for the compound record')
+    removed = ChemblNullBooleanField(default=0, help_text="Indicates whether the synonym has been removed (1) from the database")
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        unique_together = ( ("record", "record_synonym", "syn_type"),  )
 
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -502,6 +455,71 @@ class BiotherapeuticComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCo
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("biotherapeutics", "component"),  )
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    AVAILABILITY_TYPE_CHOICES = (
+        (-1, '-1'),
+        (0, '0'),
+        (1, '1'),
+        (2, '2'),
+        )
+
+    CHIRALITY_CHOICES = (
+        (-1, '-1'),
+        (0, '0'),
+        (1, '1'),
+        (2, '2'),
+        )
+
+    MAX_PHASE_CHOICES = (
+        (0, '0'),
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        )
+
+    MOLECULE_TYPE_CHOICES = (
+        ('Antibody', 'Antibody'),
+        ('Cell', 'Cell'),
+        ('Enzyme', 'Enzyme'),
+        ('Oligonucleotide', 'Oligonucleotide'),
+        ('Oligosaccharide', 'Oligosaccharide'),
+        ('Protein', 'Protein'),
+        ('Small molecule', 'Small molecule'),
+        ('Unclassified', 'Unclassified'),
+        ('Unknown', 'Unknown'),
+        )
+
+    record = models.OneToOneField(CompoundRecords, primary_key=True)
+    max_phase = ChemblPositiveIntegerField(length=1, db_index=True, default=0, choices=MAX_PHASE_CHOICES, help_text=u'Maximum phase of development reached for the compound (4 = approved). Null where max phase has not yet been assigned.')
+    withdrawn_status = ChemblCharField(max_length=10, blank=True, null=True)
+    molecule_type = ChemblCharField(max_length=30, blank=True, null=True, choices=MOLECULE_TYPE_CHOICES, help_text=u'Type of molecule (Small molecule, Protein, Antibody, Oligosaccharide, Oligonucleotide, Cell, Unknown)')
+    first_approval = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'Earliest known approval year for the molecule') # TODO: should be date!
+    oral = ChemblNullableBooleanField(default=False, help_text=u'Indicates whether the drug is known to be administered orally.')
+    parenteral = ChemblNullableBooleanField(default=False, help_text=u'Indicates whether the drug is known to be administered parenterally')
+    topical = ChemblNullableBooleanField(default=False, help_text=u'Indicates whether the drug is known to be administered topically.')
+    black_box_warning = ChemblNullableBooleanField(default=0, help_text=u'Indicates that the drug has a black box warning')
+    first_in_class = ChemblNullBooleanField(default=(-1), help_text=u'Indicates whether this is known to be the first compound of its class (e.g., acting on a particular target).')
+    chirality = ChemblIntegerField(length=1, default=(-1), choices=CHIRALITY_CHOICES, help_text=u'Shows whether a drug is dosed as a racemic mixture (0), single stereoisomer (1) or is an achiral molecule (2)')
+    prodrug = ChemblNullableBooleanField(default=False, help_text=u'Indicates that the molecule is a pro-drug (see molecule hierarchy for active component, where known)')
+    therapeutic_flag = ChemblNullableBooleanField(db_index=True, default=False, help_text=u'Indicates that a drug has a therapeutic application (as opposed to e.g., an imaging agent, additive etc).')
+    natural_product = ChemblNullBooleanField(default=(-1), help_text=u'Indicates whether the compound is natural product-derived (currently curated only for drugs)')
+    inorganic_flag = ChemblNullableBooleanField(default=0, help_text=u'Indicates whether the molecule is inorganic (i.e., containing only metal atoms and <2 carbon atoms)')
+    applicants = ChemblCharField(max_length=1000, blank=True, null=True)
+    usan_stem = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Where the compound has been assigned a USAN name, this indicates the stem, as described in the USAN_STEM table.')
+    usan_year = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'The year in which the application for a USAN/INN name was made')
+    availability_type = ChemblIntegerField(length=1, blank=True, null=True, choices=AVAILABILITY_TYPE_CHOICES, help_text=u'The availability type for the drug (0 = discontinued, 1 = prescription only, 2 = over the counter)')
+    usan_substem = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Where the compound has been assigned a USAN name, this indicates the substem')
+    indication_class = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Indication class(es) assigned to a drug in the USP dictionary')
+    usan_stem_definition = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Definition of the USAN stem')
+    polymer_flag = ChemblNullableBooleanField(help_text=u'Indicates whether a molecule is a small molecule polymer (e.g., polistyrex)')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
 
 #-----------------------------------------------------------------------------------------------------------------------
 

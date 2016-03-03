@@ -17,8 +17,8 @@ class Products(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)
         )
 
     NDA_TYPE_CHOICES = (
-        ('A', 'A'),
         ('N', 'N'),
+        ('A', 'A'),
         )
 
     dosage_form = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'The dosage form of the product (e.g., tablet, capsule etc)')
