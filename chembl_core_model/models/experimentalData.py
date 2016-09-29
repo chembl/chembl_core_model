@@ -79,6 +79,7 @@ class BioassayOntology(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     TERM_TYPE_CHOICES = (
         ('ASSAY_FORMAT', 'ASSAY_FORMAT'),
         ('ASSAY_TYPE', 'ASSAY_TYPE'),
+        ('BIOASSAY', 'BIOASSAY'),
         ('ENDPOINT', 'ENDPOINT'),
         ('ENDPOINT_CORRELATION', 'ENDPOINT_CORRELATION'),
         ('ENDPOINT_CURVE', 'ENDPOINT_CURVE'),
@@ -154,7 +155,7 @@ class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     a2t_multi = ChemblNullableBooleanField()
     mc_tax_id = ChemblPositiveIntegerField(length=11, blank=True, null=True)
     mc_organism = ChemblCharField(max_length=100, blank=True, null=True)
-    mc_target_type = ChemblCharField(max_length=25, blank=True, null=True)
+    mc_target_type = ChemblCharField(max_length=28, blank=True, null=True)
     mc_target_name = ChemblCharField(max_length=4000, blank=True, null=True)
     mc_target_accession = ChemblCharField(max_length=255, blank=True, null=True)
     a2t_assay_tax_id = ChemblPositiveIntegerField(length=11, blank=True, null=True)
@@ -162,7 +163,10 @@ class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     a2t_updated_on = ChemblDateField(blank=True, null=True)
     a2t_updated_by = ChemblCharField(max_length=100, blank=True, null=True)
     cell = models.ForeignKey(CellDictionary, blank=True, null=True, help_text=u'Foreign key to cell dictionary. The cell type or cell line used in the assay')
-    bao_format = ChemblCharField(max_length=11, db_index=True, blank=True, null=True, help_text=u'ID for the corresponding format type in BioAssay Ontology (e.g., cell-based, biochemical, organism-based etc)')
+    bao_format = models.ForeignKey(BioassayOntology, blank=True, null=True, db_column='bao_format', help_text=u'ID for the corresponding format type in BioAssay Ontology (e.g., cell-based, biochemical, organism-based etc)')
+    tissue = models.ForeignKey(TissueDictionary, blank=True, null=True, help_text=u'ID for the corresponding tissue/anatomy in Uberon. Foreign key to tissue_dictionary')
+    curation_comment = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'Just for prudence!')
+    variant = models.ForeignKey(VariantSequences, blank=True, null=True, help_text=u'Foreign key to variant_sequences table. Indicates the mutant/variant version of the target used in the assay (where known/applicable)')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -206,11 +210,11 @@ class Activities(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
     published_type = ChemblCharField(max_length=250, db_index=True, blank=True, null=True, help_text=u'Type of end-point measurement: e.g. IC50, LD50, %inhibition etc, as it appears in the original publication')
     manual_curation_flag = ChemblPositiveIntegerField(length=1, blank=False, null=True, default=0, choices=MANUAL_CURATION_FLAG_CHOICES) # blank is false because it has default value
     data_validity_comment = models.ForeignKey(DataValidityLookup, blank=True, null=True, db_column='data_validity_comment', help_text=u"Comment reflecting whether the values for this activity measurement are likely to be correct - one of 'Manually validated' (checked original paper and value is correct), 'Potential author error' (value looks incorrect but is as reported in the original paper), 'Outside typical range' (value seems too high/low to be correct e.g., negative IC50 value), 'Non standard unit type' (units look incorrect for this activity type).")
-    potential_duplicate = ChemblBooleanField(help_text=u'When set to 1, indicates that the value is likely to be a repeat citation of a value reported in a previous ChEMBL paper, rather than a new, independent measurement.') # CHECK TYPE
+    potential_duplicate = ChemblNullableBooleanField(help_text=u'When set to 1, indicates that the value is likely to be a repeat citation of a value reported in a previous ChEMBL paper, rather than a new, independent measurement. Note: value of zero does not guarantee that the measurement is novel/independent though')
     published_relation = ChemblCharField(max_length=50, db_index=True, blank=True, null=True, help_text=u'Symbol constraining the activity value (e.g. >, <, =), as it appears in the original publication')
     original_activity_id = ChemblPositiveIntegerField(length=11, blank=True, null=True) # TODO: should that be FK referencing Activities in future?
     pchembl_value = models.DecimalField(db_index=True, blank=True, null=True, max_digits=4, decimal_places=2, help_text=u'Negative log of selected concentration-response activity values (IC50/EC50/XC50/AC50/Ki/Kd/Potency)')
-    bao_endpoint = ChemblCharField(max_length=11, blank=True, null=True, help_text=u'ID for the corresponding result type in BioAssay Ontology (based on standard_type)')
+    bao_endpoint = models.ForeignKey(BioassayOntology, blank=True, null=True, db_column='bao_endpoint', help_text=u'ID for the corresponding result type in BioAssay Ontology (based on standard_type)')
     uo_units = ChemblCharField(max_length=10, blank=True, null=True, help_text=u'ID for the corresponding unit in Unit Ontology (based on standard_units)')
     qudt_units = ChemblCharField(max_length=70, blank=True, null=True, help_text=u'ID for the corresponding unit in QUDT Ontology (based on standard_units)')
 
@@ -221,7 +225,7 @@ class Activities(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
 
 class AssayParameters(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
-    assay_param_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Numeric primary key')
+    assay_param_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Numeric primary key')
     assay = models.ForeignKey(Assays, help_text=u'Foreign key to assays table. The assay to which this parameter belongs')
     parameter_type = models.ForeignKey(ParameterType, db_column='parameter_type', help_text=u'Foreign key to parameter_type table, defining the meaning of the parameter')
     parameter_value = ChemblCharField(max_length=2000, help_text=u'The value of the particular parameter')

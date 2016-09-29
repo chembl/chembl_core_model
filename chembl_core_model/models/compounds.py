@@ -100,6 +100,7 @@ class BioComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreA
 class MoleculeDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     AVAILABILITY_TYPE_CHOICES = (
+        (-2, '-2'),
         (-1, '-1'),
         (0, '0'),
         (1, '1'),
@@ -217,6 +218,10 @@ class MoleculeDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     products = models.ManyToManyField('Products', through="Formulations", null=True, blank=True)
     docs = models.ManyToManyField('Docs', through="CompoundRecords", null=True, blank=True)
     assays = models.ManyToManyField('Assays', through="Activities", null=True, blank=True)
+    withdrawn_flag = ChemblBooleanField(default=False, help_text="Flag indicating whether the drug has been withdrawn in at least one country (not necessarily in the US)")
+    withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'Year the drug was first withdrawn in any country')
+    withdrawn_country = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'List of countries/regions where the drug has been withdrawn')
+    withdrawn_reason = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Reasons for withdrawal (e.g., safety)')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -361,10 +366,11 @@ class MoleculeHierarchy(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
 class MoleculeSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     molecule = models.ForeignKey(MoleculeDictionary, db_column='molregno', help_text=u'Foreign key to molecule_dictionary')
+    synonyms = ChemblCharField(max_length=200, db_index=True, blank=True, null=True, help_text=u'Synonym for the compound')
     syn_type = ChemblCharField(max_length=50, help_text=u'Type of name/synonym (e.g., TRADE_NAME, RESEARCH_CODE, USAN)')
     molsyn_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key.')
     res_stem = models.ForeignKey(ResearchStem, blank=True, null=True, help_text=u'Foreign key to the research_stem table. Where a synonym is a research code, this links to further information about the company associated with that code.')
-    synonyms = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Synonym for the compound')
+    molecule_synonym = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Synonym for the compound')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("molecule", "synonyms", "syn_type"),  )
@@ -461,6 +467,7 @@ class BiotherapeuticComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCo
 class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     AVAILABILITY_TYPE_CHOICES = (
+        (-2, '-2'),
         (-1, '-1'),
         (0, '0'),
         (1, '1'),
@@ -517,6 +524,10 @@ class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
     indication_class = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Indication class(es) assigned to a drug in the USP dictionary')
     usan_stem_definition = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Definition of the USAN stem')
     polymer_flag = ChemblNullableBooleanField(help_text=u'Indicates whether a molecule is a small molecule polymer (e.g., polistyrex)')
+    withdrawn_flag = ChemblPositiveIntegerField(length=1, blank=True, null=True)
+    withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
+    withdrawn_country = ChemblCharField(max_length=1000, blank=True, null=True)
+    withdrawn_reason = ChemblCharField(max_length=1000, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass

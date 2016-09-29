@@ -26,6 +26,7 @@ class ChemblIdLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
         ('COMPOUND', 'COMPOUND'),
         ('DOCUMENT', 'DOCUMENT'),
         ('TARGET', 'TARGET'),
+        ('TISSUE', 'TISSUE'),
         )
 
     STATUS_CHOICES = (

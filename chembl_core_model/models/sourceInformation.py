@@ -41,6 +41,7 @@ class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
         ('PUBLICATION', 'PUBLICATION'),
         ('BOOK', 'BOOK'),
         ('DATASET', 'DATASET'),
+        ('PATENT', 'PATENT'),
         )
 
     doc_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Unique ID for the document')
@@ -60,6 +61,7 @@ class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     authors = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'For a deposited dataset, the authors carrying out the screening and/or submitting the dataset.')
     abstract = ChemblTextField(blank=True, null=True, help_text=u'For a deposited dataset, a brief description of the dataset.')
     journal_id = models.ForeignKey(Journals, blank=True, null=True, db_column='journal_id')
+    patent_id = ChemblCharField(max_length=20, blank=True, null=True, help_text=u'Patent ID for this document')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass

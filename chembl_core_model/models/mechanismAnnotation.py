@@ -42,10 +42,10 @@ class DrugMechanism(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     mechanism_comment = ChemblCharField(max_length=500, blank=True, null=True, help_text=u'Additional comments regarding the mechanism of action')
     selectivity_comment = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'Additional comments regarding the selectivity of the drug')
     binding_site_comment = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'Additional comments regarding the binding site of the drug')
-    curated_by = ChemblCharField(max_length=20, blank=True, null=True)
+    curated_by = ChemblCharField(max_length=20)
     date_added = ChemblDateField(default=datetime.date.today)
     date_removed = ChemblDateField(blank=True, null=True)
-    downgraded = ChemblNullableBooleanField()
+    downgraded = ChemblBooleanField(default=False)
     downgrade_reason = ChemblCharField(max_length=200, blank=True, null=True)
     curator_comment = ChemblCharField(max_length=500, blank=True, null=True)
     curation_status = ChemblCharField(max_length=10, default=u'PARTIAL', choices=CURATION_STATUS_CHOICES, help_text=u'Show whether the curation for this row is complete')
@@ -145,7 +145,7 @@ class MechanismRefs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     ref_type = ChemblCharField(max_length=50, choices=REF_TYPE_CHOICES, help_text=u"Type/source of reference (e.g., 'PubMed','DailyMed')")
     ref_id = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Identifier for the reference in the source (e.g., PubMed ID or DailyMed setid)')
     ref_url = ChemblCharField(max_length=400, blank=True, null=True, help_text=u'Full URL linking to the reference')
-    downgraded = ChemblPositiveIntegerField(length=1, blank=True, null=True)
+    downgraded = ChemblNullableBooleanField()
     downgrade_reason = ChemblCharField(max_length=4000, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):

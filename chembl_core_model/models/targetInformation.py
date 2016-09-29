@@ -147,6 +147,37 @@ class ComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class VariantSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+
+    ISOFORM_CHOICES = (
+        (1, '1'),
+        (2, '2'),
+        (4, '4'),
+        )
+
+    VERSION_CHOICES = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+        )
+
+    variant_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Primary key, numeric ID for each sequence variant.')
+    mutation = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Details of variant(s) used, with residue positions adjusted to match provided sequence.')
+    accession = ChemblCharField(max_length=25, blank=True, null=True, help_text=u'UniProt accesion for the representative sequence used as the base sequence (without variation).')
+    version = ChemblPositiveIntegerField(length=9, blank=True, null=True, choices=VERSION_CHOICES, help_text=u'Version of the UniProt sequence used as the base sequence.')
+    isoform = ChemblPositiveIntegerField(length=9, blank=True, null=True, choices=ISOFORM_CHOICES, help_text=u'Details of the UniProt isoform used as the base sequence where relevant.')
+    sequence = ChemblTextField(blank=True, null=True, help_text=u'Variant sequence formed by adjusting the UniProt base sequence with the specified mutations/variations.')
+    organism = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Organism from which the sequence was obtained.')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        #unique_together = ( ("mutation", "accession"),  )
+        pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 class TargetDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
 
@@ -222,7 +253,7 @@ class CellDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     cellosaurus_id = ChemblCharField(max_length=15, blank=True, null=True, help_text=u'ID for the corresponding cell line in Cellosaurus Ontology')
     downgraded = ChemblNullableBooleanField(default=False, help_text=u'Indicates the cell line has been removed (if set to 1)')
     cl_lincs_id = ChemblCharField(max_length=8, blank=True, null=True, help_text=u'Cell ID used in LINCS (Library of Integrated Network-based Cellular Signatures)')
-    chembl = models.ForeignKey(ChemblIdLookup, blank=True, null=True, help_text=u'ChEMBL identifier for the cell (used in web interface etc)')
+    chembl = models.ForeignKey(ChemblIdLookup, unique=True, blank=True, null=True, help_text=u'ChEMBL identifier for the cell (used in web interface etc)')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("cell_name", "cell_source_tax_id"),  )
@@ -249,10 +280,25 @@ class ProteinClassSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class TissueDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    tissue_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key, numeric ID for each tissue.')
+    uberon_id = ChemblCharField(max_length=15, blank=True, null=True, help_text=u'Uberon ontology identifier for this tissue.')
+    pref_name = ChemblCharField(max_length=200, help_text=u'Name for the tissue (in most cases Uberon name).')
+    efo_id = ChemblCharField(max_length=20, blank=True, null=True, help_text=u'Experimental Factor Ontology identifier for the tissue.')
+    chembl = models.ForeignKey(ChemblIdLookup, unique=True, help_text=u'ChEMBL identifier for this tissue (for use on web interface etc)')
+    bto_id = ChemblCharField(max_length=20, blank=True, null=True, help_text=u'BRENDA Tissue Ontology identifier for the tissue.')
+    caloha_id = ChemblCharField(max_length=7, blank=True, null=True, help_text=u'Swiss Institute for Bioinformatics CALOHA Ontology identifier for the tissue.')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        unique_together = ( ("uberon_id", "efo_id"),  )
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 class ComponentGo(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
 
-    comp_go_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Primary key')
+    comp_go_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key')
     component = models.ForeignKey(ComponentSequences, help_text=u'Foreign key to COMPONENT_SEQUENCES table. The protein component this GO term applies to')
     go = models.ForeignKey(GoClassification, help_text=u'Foreign key to the GO_CLASSIFICATION table. The GO term that this protein is mapped to')
 
@@ -313,7 +359,7 @@ class TargetRelations(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
     target = models.ForeignKey(TargetDictionary, related_name='to', db_column='tid', help_text=u'Identifier for target of interest (foreign key to target_dictionary table)')
     relationship = ChemblCharField(max_length=20, choices=RELATIONSHIP_CHOICES, help_text=u'Relationship between two targets (e.g., SUBSET OF, SUPERSET OF, OVERLAPS WITH)')
     related_target = models.ForeignKey(TargetDictionary, related_name='from', db_column='related_tid', help_text=u'Identifier for the target that is related to the target of interest (foreign key to target_dicitionary table)')
-    targrel_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Primary key')
+    targrel_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
