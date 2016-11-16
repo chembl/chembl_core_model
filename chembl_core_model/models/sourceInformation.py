@@ -97,3 +97,41 @@ class JournalArticles(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class PaperSimilarityVw(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    doc_1 = models.ForeignKey(Docs, help_text=u'Foreign key to documents table', db_column='doc_id1', related_name='to', primary_key=True)
+    doc_2 = models.ForeignKey(Docs, help_text=u'Foreign key to documents table', db_column='doc_id2', related_name='from')
+    pubmed_id1 = ChemblPositiveIntegerField(length=12, blank=True, null=True)
+    pubmed_id2 = ChemblPositiveIntegerField(length=12, blank=True, null=True)
+    tid_tani = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
+    mol_tani = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
+    avg_tani = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
+    max_tani = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+class DocumentTerms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    id = ChemblAutoField(primary_key=True, length=11)
+    term = ChemblCharField(max_length=500)
+    documents = models.ManyToManyField('Docs', through="Doc2Term", null=True, blank=True)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+class Doc2Term(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    id = ChemblAutoField(primary_key=True, length=11)
+    score = ChemblPositiveDecimalField(max_digits=11, decimal_places=6)
+    doc = models.ForeignKey(Docs)
+    term = models.ForeignKey(DocumentTerms)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        unique_together = ( ("doc", "term"),  )
+
+#-----------------------------------------------------------------------------------------------------------------------

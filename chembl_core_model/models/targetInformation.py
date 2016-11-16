@@ -208,6 +208,41 @@ class TargetDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+class TargetPredictions10Um(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+
+    pred_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Unique ID for the prediction')
+    parent_molregno = ChemblPositiveIntegerField(length=38)
+    chembl_id = ChemblCharField(max_length=20, blank=True, null=True)
+    target = models.ForeignKey(TargetDictionary, db_column='tid', help_text=u'Foreign key to the target_dictionary, indicating the target to which the predictions belong.')
+    target_chembl_id = ChemblCharField(max_length=20, blank=True, null=True)
+    target_accession = ChemblCharField(max_length=20, blank=True, null=True)
+    probability = ChemblNoLimitDecimalField(blank=True, null=True)
+    in_training = ChemblCharField(max_length=20, blank=True, null=True)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+class TargetPredictions1Um(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+
+    pred_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Unique ID for the prediction')
+    parent_molregno = ChemblPositiveIntegerField(length=38)
+    chembl_id = ChemblCharField(max_length=20, blank=True, null=True)
+    target = models.ForeignKey(TargetDictionary, db_column='tid', help_text=u'Foreign key to the target_dictionary, indicating the target to which the predictions belong.')
+    target_chembl_id = ChemblCharField(max_length=20, blank=True, null=True)
+    target_accession = ChemblCharField(max_length=20, blank=True, null=True)
+    probability = ChemblNoLimitDecimalField(blank=True, null=True)
+    in_training = ChemblCharField(max_length=20, blank=True, null=True)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+
 class ComponentClass(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     component = models.ForeignKey(ComponentSequences, help_text=u'Foreign key to component_sequences table.')

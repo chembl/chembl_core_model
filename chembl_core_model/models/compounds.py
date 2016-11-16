@@ -34,42 +34,9 @@ class ResearchStem(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMo
 
 class StructuralAlertSets(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
-    ALERT_SET_ID_CHOICES = (
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        (5, '5'),
-        (6, '6'),
-        (7, '7'),
-        (8, '8'),
-        )
-
-    PRIORITY_CHOICES = (
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        (5, '5'),
-        (6, '6'),
-        (7, '7'),
-        (8, '8'),
-        )
-
-    SET_NAME_CHOICES = (
-        ('BMS', 'BMS'),
-        ('Dundee', 'Dundee'),
-        ('Glaxo', 'Glaxo'),
-        ('Inpharmatica', 'Inpharmatica'),
-        ('LINT', 'LINT'),
-        ('MLSMR', 'MLSMR'),
-        ('PAINS', 'PAINS'),
-        ('SureChEMBL', 'SureChEMBL'),
-        )
-
-    alert_set_id = ChemblPositiveIntegerField(primary_key=True, length=9, choices=ALERT_SET_ID_CHOICES, help_text=u'Unique ID for the structural alert set')
-    set_name = ChemblCharField(max_length=100, unique=True, choices=SET_NAME_CHOICES, help_text=u'Name (or origin) of the structural alert set')
-    priority = ChemblPositiveIntegerField(length=2, choices=PRIORITY_CHOICES, help_text=u'Priority assigned to the structural alert set for display on the ChEMBL interface (priorities >=4 are shown by default).')
+    alert_set_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Unique ID for the structural alert set')
+    set_name = ChemblCharField(max_length=100, unique=True, help_text=u'Name (or origin) of the structural alert set')
+    priority = ChemblPositiveIntegerField(length=2, help_text=u'Priority assigned to the structural alert set for display on the ChEMBL interface (priorities >=4 are shown by default).')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -243,19 +210,8 @@ class ResearchCompanies(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
 
 class StructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
-    ALERT_SET_ID_CHOICES = (
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        (5, '5'),
-        (6, '6'),
-        (7, '7'),
-        (8, '8'),
-        )
-
     alert_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Primary key. Unique identifier for the structural alert')
-    alert_set = models.ForeignKey(StructuralAlertSets, choices=ALERT_SET_ID_CHOICES, help_text=u'Foreign key to structural_alert_sets table indicating which set this particular alert comes from')
+    alertset = models.ForeignKey(StructuralAlertSets, db_column='alert_set_id', help_text=u'Foreign key to structural_alert_sets table indicating which set this particular alert comes from')
     alert_name = ChemblCharField(max_length=100, help_text=u'A name for the structural alert')
     smarts = ChemblCharField(max_length=4000, help_text=u'SMARTS defining the structural feature that is considered to be an alert')
 
