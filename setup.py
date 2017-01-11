@@ -11,8 +11,8 @@ except ImportError:
     from setuptools import setup
 
 setup(
-    name='chembl_core_model',
-    version='0.8.2',
+    name='chembl-core-model',
+    version='0.8.3',
     author='Michal Nowotka',
     author_email='mnowotka@ebi.ac.uk',
     description='Core ChEMBL python ORM model',
@@ -22,7 +22,7 @@ setup(
               'chembl_core_model.models'],
     long_description=open('README.rst').read(),
     install_requires=[
-        'chembl_core_db>=0.8.3',
+        'chembl-core-db>=0.8.4',
         'pyyaml',
     ],
     package_data={
