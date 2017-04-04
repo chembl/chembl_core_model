@@ -6,7 +6,8 @@ from chembl_core_db.db.models.abstractModel import ChemblCoreAbstractModel
 from chembl_core_db.db.models.abstractModel import ChemblModelMetaClass
 from django.utils import six
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Products(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -44,7 +45,8 @@ class Products(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class AtcClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -64,10 +66,10 @@ class AtcClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class UsanStems(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     MAJOR_CLASS_CHOICES = (
         ('GPCR', 'GPCR'),
@@ -94,9 +96,10 @@ class UsanStems(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel
     downgraded = ChemblNullableBooleanField(default=False, help_text=u'Stem no longer included in USAN listing (where set to 1).')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("stem", "subgroup"),  )
+        unique_together = (("stem", "subgroup"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class HracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -112,7 +115,8 @@ class HracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class IracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -150,7 +154,8 @@ class IracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class FracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -170,10 +175,10 @@ class FracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class PatentUseCodes(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     patent_use_code = ChemblCharField(primary_key=True, max_length=8, help_text=u'Primary key. Patent use code from FDA Orange Book')
     definition = ChemblCharField(max_length=500, help_text=u'Definition for the patent use code, from FDA Orange Book.')
@@ -181,7 +186,8 @@ class PatentUseCodes(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class DefinedDailyDose(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -208,7 +214,8 @@ class DefinedDailyDose(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ProductPatents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -223,9 +230,10 @@ class ProductPatents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     in_products = ChemblPositiveIntegerField(length=1, default=0, help_text=u'Indicates whether the PRODUCT_ID can be found in the PRODUCTS table (where set to 1)')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("product", "patent_no", "patent_expire_date", "patent_use_code"),  )
+        unique_together = (("product", "patent_no", "patent_expire_date", "patent_use_code"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class MoleculeAtcClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -236,7 +244,8 @@ class MoleculeAtcClassification(six.with_metaclass(ChemblModelMetaClass, ChemblC
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class MoleculeIracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -245,9 +254,10 @@ class MoleculeIracClassification(six.with_metaclass(ChemblModelMetaClass, Chembl
     molecule = models.ForeignKey(MoleculeDictionary, db_column='molregno', help_text=u'Foreign key to the molecule_dictionary table, showing the compound to which the classification applies.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("irac_class", "molecule"),  )
+        unique_together = (("irac_class", "molecule"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class MoleculeFracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -258,7 +268,8 @@ class MoleculeFracClassification(six.with_metaclass(ChemblModelMetaClass, Chembl
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("frac_class", "molecule"),  )
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class MoleculeHracClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -267,9 +278,10 @@ class MoleculeHracClassification(six.with_metaclass(ChemblModelMetaClass, Chembl
     molecule = models.ForeignKey(MoleculeDictionary, db_column='molregno', help_text=u'Foreign key to molecule_dictionary, showing the compound to which this classification applies.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("hrac_class", "molecule"),  )
+        unique_together = (("hrac_class", "molecule"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Formulations(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -281,7 +293,7 @@ class Formulations(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMo
     formulation_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("record", "product"),  )
+        unique_together = (("record", "product"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 

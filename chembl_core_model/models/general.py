@@ -5,7 +5,8 @@ from chembl_core_db.db.models.abstractModel import ChemblCoreAbstractModel
 from chembl_core_db.db.models.abstractModel import ChemblModelMetaClass
 from django.utils import six
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Version(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -16,7 +17,8 @@ class Version(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel))
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ChemblIdLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -41,7 +43,8 @@ class ChemblIdLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     status = ChemblCharField(max_length=10, default=u'ACTIVE', choices=STATUS_CHOICES, help_text=u'Indicates whether the status of the entity within the database - ACTIVE, INACTIVE (downgraded), OBS (obsolete/removed).')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("entity_id", "entity_type"),  )
+        unique_together = (("entity_id", "entity_type"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 

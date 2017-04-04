@@ -20,7 +20,99 @@ try:
 except AttributeError:
     CTAB_COLUMN = None
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+class MoleculeBrowseDrugs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    AVAILABILITY_TYPE_CHOICES = (
+        (-2, -2),
+        (-1, -1),
+        (0, 0),
+        (1, 1),
+        (2, 2),
+        )
+
+    AVAILABILITY_TYPE_TEXT_CHOICES = (
+        ('Discontinued', 'Discontinued'),
+        ('Over-The-Counter', 'Over-The-Counter'),
+        ('Prescription-only', 'Prescription-only'),
+        ('Unknown', 'Unknown'),
+        ('Withdrawn', 'Withdrawn'),
+        )
+
+    FLAG_TEXT_CHOICES = (
+        ('N', 'N'),
+        ('Y', 'Y'),
+        )
+
+    CHIRALITY_CHOICES = (
+        (-1, -1),
+        (0, 0),
+        (1, 1),
+        (2, 2),
+        )
+
+    CHIRALITY_TEXT_CHOICES = (
+        ('Achiral Molecule', 'Achiral Molecule'),
+        ('Racemic Mixture', 'Racemic Mixture'),
+        ('Single Stereoisomer', 'Single Stereoisomer'),
+        ('Unknown', 'Unknown'),
+        )
+
+    DEVELOPMENT_PHASE_CHOICES = (
+        (0, 0),
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        )
+
+    parent = models.OneToOneField('MoleculeDictionary', primary_key=True, db_column='parent_molregno')
+    chembl = models.OneToOneField(ChemblIdLookup, blank=True, null=False, help_text=u'ChEMBL identifier for this compound (for use on web interface etc)')
+    synonyms = ChemblCharField(max_length=4000, blank=True, null=True)
+    development_phase = ChemblPositiveIntegerField(length=1, blank=True, null=True, choices=DEVELOPMENT_PHASE_CHOICES)
+    research_codes = ChemblCharField(max_length=600, blank=True, null=True)
+    applicants = ChemblCharField(max_length=2000, blank=True, null=True)
+    usan_stem = ChemblCharField(max_length=600, blank=True, null=True)
+    usan_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
+    first_approval = ChemblPositiveIntegerField(length=4, blank=True, null=True)
+    atc_code = ChemblCharField(max_length=2000, blank=True, null=True)
+    drug_type = ChemblIntegerField(length=2, blank=True, null=True)
+    rule_of_five = ChemblNullableBooleanField()
+    first_in_class = ChemblNullableBooleanField()
+    chirality = ChemblIntegerField(length=1, blank=True, null=True, choices=CHIRALITY_CHOICES)
+    prodrug = ChemblNullableBooleanField()
+    oral = ChemblNullableBooleanField()
+    parenteral = ChemblNullableBooleanField()
+    topical = ChemblNullableBooleanField()
+    black_box = ChemblNullableBooleanField()
+    availability_type = ChemblIntegerField(length=1, blank=True, null=True, choices=AVAILABILITY_TYPE_CHOICES)
+    drug_type_text = ChemblCharField(max_length=300, blank=True, null=True)
+    rule_of_five_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
+    first_in_class_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
+    chirality_text = ChemblCharField(max_length=120, blank=True, null=True, choices=CHIRALITY_TEXT_CHOICES)
+    prodrug_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
+    oral_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
+    parenteral_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
+    topical_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
+    black_box_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
+    availability_type_text = ChemblCharField(max_length=60, blank=True, null=True, choices=AVAILABILITY_TYPE_TEXT_CHOICES)
+    usan_stem_definition = ChemblCharField(max_length=2000, blank=True, null=True)
+    indication_class = ChemblCharField(max_length=2000, blank=True, null=True)
+    usan_stem_substem = ChemblCharField(max_length=300, blank=True, null=True)
+    atc_code_description = ChemblCharField(max_length=2000, blank=True, null=True)
+    ob_patent_no = ChemblCharField(max_length=120, blank=True, null=True)
+    sc_patent_no = ChemblCharField(max_length=180, blank=True, null=True)
+    withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
+    withdrawn_country = ChemblCharField(max_length=2000, blank=True, null=True)
+    withdrawn_reason = ChemblCharField(max_length=2000, blank=True, null=True)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ResearchStem(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -30,7 +122,8 @@ class ResearchStem(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMo
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class StructuralAlertSets(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -41,7 +134,8 @@ class StructuralAlertSets(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbs
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class BioComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -62,7 +156,8 @@ class BioComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreA
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class MoleculeDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -147,7 +242,7 @@ class MoleculeDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
 
     molregno = ChemblAutoField(primary_key=True, length=9, help_text=u'Internal Primary Key for the molecule')
     pref_name = ChemblCharField(max_length=255, db_index=True, blank=True, null=True, help_text=u'Preferred name for the molecule')
-    chembl = models.ForeignKey(ChemblIdLookup, unique=True, blank=True, null=False, help_text=u'ChEMBL identifier for this compound (for use on web interface etc)') # This combination of null and blank is actually very important!
+    chembl = models.OneToOneField(ChemblIdLookup, blank=True, null=False, help_text=u'ChEMBL identifier for this compound (for use on web interface etc)') # This combination of null and blank is actually very important!
     max_phase = ChemblPositiveIntegerField(length=1, db_index=True, default=0, choices=MAX_PHASE_CHOICES, help_text=u'Maximum phase of development reached for the compound (4 = approved). Null where max phase has not yet been assigned.')
     therapeutic_flag = ChemblBooleanField(db_index=True, default=False, help_text=u'Indicates that a drug has a therapeutic application (as opposed to e.g., an imaging agent, additive etc).')
     dosed_ingredient = ChemblBooleanField(default=False, help_text=u'Indicates that the drug is dosed in this form (e.g., a particular salt)')
@@ -182,18 +277,22 @@ class MoleculeDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     usan_substem = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Where the compound has been assigned a USAN name, this indicates the substem')
     usan_stem_definition = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Definition of the USAN stem')
     indication_class = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Indication class(es) assigned to a drug in the USP dictionary')
-    products = models.ManyToManyField('Products', through="Formulations", null=True, blank=True)
-    docs = models.ManyToManyField('Docs', through="CompoundRecords", null=True, blank=True)
-    assays = models.ManyToManyField('Assays', through="Activities", null=True, blank=True)
+    products = models.ManyToManyField('Products', through="Formulations", blank=True)
+    docs = models.ManyToManyField('Docs', through="CompoundRecords", blank=True)
+    assays = models.ManyToManyField('Assays', through="Activities", blank=True)
     withdrawn_flag = ChemblBooleanField(default=False, help_text="Flag indicating whether the drug has been withdrawn in at least one country (not necessarily in the US)")
     withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'Year the drug was first withdrawn in any country')
     withdrawn_country = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'List of countries/regions where the drug has been withdrawn')
     withdrawn_reason = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Reasons for withdrawal (e.g., safety)')
 
+    def __str__(self):
+        return 'Molecule {0} ({1}) {2}'.format(self.molregno, self.chembl_id, self.pref_name)
+
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ResearchCompanies(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -204,9 +303,10 @@ class ResearchCompanies(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
     previous_company = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'Previous name of the company associated with this research code stem (e.g., if the company has undergone acquisitions/mergers).')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("res_stem", "company"),  )
+        unique_together = (("res_stem", "company"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class StructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -216,12 +316,12 @@ class StructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     smarts = ChemblCharField(max_length=4000, help_text=u'SMARTS defining the structural feature that is considered to be an alert')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        pass #unique_together = ( ("alert_set", "alert_name", "smarts"),  )
+        pass # unique_together = (("alert_set", "alert_name", "smarts"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     MOLECULAR_SPECIES_CHOICES = (
         ('ACID', 'ACID'),
@@ -272,7 +372,8 @@ class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class CompoundRecords(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -300,24 +401,30 @@ class CompoundRecords(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
     removed = ChemblNullBooleanField(default=0)
     src_compound_id_version = ChemblPositiveIntegerField(length=3, blank=True, null=True, choices=SRC_COMPOUND_ID_VERSION_CHOICES)
     curated = ChemblBooleanField(default=False, help_text=u'Can be marked as curated if the entry has been mapped to a molregno other than that given by the original structure, and hence care should be taken when updating')
-    products = models.ManyToManyField('Products', through="Formulations", null=True, blank=True)
-    assays = models.ManyToManyField('Assays', through="Activities", null=True, blank=True)
+    products = models.ManyToManyField('Products', through="Formulations", blank=True)
+    assays = models.ManyToManyField('Assays', through="Activities", blank=True)
+
+    def __str__(self):
+        return 'Compound Record {0} for Molecule {1}, name {2}, key {3}'.format(
+            self.record_id, self.molecule.chembl_id, self.compound_name, self.compound_key)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class MoleculeHierarchy(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     molecule = models.OneToOneField(MoleculeDictionary, primary_key=True, db_column='molregno', help_text=u'Foreign key to compounds table. This field holds a list of all of the ChEMBL compounds with associated data (e.g., activity information, approved drugs). Parent compounds that are generated only by removing salts, and which do not themselves have any associated data will not appear here.')
-    parent_molecule = models.ForeignKey(MoleculeDictionary, db_index=True, blank=True, null=True, related_name='parent', db_column='parent_molregno', help_text=u'Represents parent compound of molregno in first field (i.e., generated by removing salts). Where molregno and parent_molregno are same, the initial ChEMBL compound did not contain a salt component, or else could not be further processed for various reasons (e.g., inorganic mixture). Compounds which are only generated by removing salts will appear in this field only. Those which, themselves, have any associated data (e.g., activity data) or are launched drugs will also appear in the molregno field.')
-    active_molecule = models.ForeignKey(MoleculeDictionary, blank=True, null=True, related_name='active', db_column='active_molregno', help_text=u"Where a compound is a pro-drug, this represents the active metabolite of the 'dosed' compound given by parent_molregno. Where parent_molregno and active_molregno are the same, the compound is not currently known to be a pro-drug. ")
+    parent_molecule = models.ForeignKey(MoleculeDictionary, db_index=True, blank=True, null=True, related_name=u'parent', db_column='parent_molregno', help_text=u'Represents parent compound of molregno in first field (i.e., generated by removing salts). Where molregno and parent_molregno are same, the initial ChEMBL compound did not contain a salt component, or else could not be further processed for various reasons (e.g., inorganic mixture). Compounds which are only generated by removing salts will appear in this field only. Those which, themselves, have any associated data (e.g., activity data) or are launched drugs will also appear in the molregno field.')
+    active_molecule = models.ForeignKey(MoleculeDictionary, blank=True, null=True, related_name=u'active', db_column='active_molregno', help_text=u"Where a compound is a pro-drug, this represents the active metabolite of the 'dosed' compound given by parent_molregno. Where parent_molregno and active_molregno are the same, the compound is not currently known to be a pro-drug. ")
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class MoleculeSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -329,9 +436,10 @@ class MoleculeSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     molecule_synonym = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Synonym for the compound')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("molecule", "synonyms", "syn_type"),  )
+        unique_together = (("molecule", "synonyms", "syn_type"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class RecordSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -344,21 +452,23 @@ class RecordSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     removed = ChemblNullBooleanField(default=0, help_text="Indicates whether the synonym has been removed (1) from the database")
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("record", "record_synonym", "syn_type"),  )
+        unique_together = (("record", "record_synonym", "syn_type"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Biotherapeutics(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     molecule = models.OneToOneField(MoleculeDictionary, primary_key=True, db_column='molregno', help_text=u'Foreign key to molecule_dictionary')
     description = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Description of the biotherapeutic.')
     helm_notation = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'Sequence notation generated according to the HELM standard (http://www.openhelm.org/home). Currently for peptides only')
-    bio_component_sequences = models.ManyToManyField('BioComponentSequences', through="BiotherapeuticComponents", null=True, blank=True)
+    bio_component_sequences = models.ManyToManyField('BioComponentSequences', through="BiotherapeuticComponents", blank=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class CompoundStructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -369,7 +479,8 @@ class CompoundStructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCo
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("molecule", "alert"),  )
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class CompoundImages(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -380,7 +491,8 @@ class CompoundImages(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class CompoundMols(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -393,7 +505,8 @@ class CompoundMols(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMo
         if COMPOUND_MOLS_TABLE:
             db_table = COMPOUND_MOLS_TABLE
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class CompoundStructures(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -407,7 +520,8 @@ class CompoundStructures(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class BiotherapeuticComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -416,9 +530,10 @@ class BiotherapeuticComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCo
     component = models.ForeignKey(BioComponentSequences, help_text=u'Foreign key to the bio_component_sequences table, indicating which component is part of the biotherapeutic.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("biotherapeutics", "component"),  )
+        unique_together = (("biotherapeutics", "component"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -488,5 +603,5 @@ class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 

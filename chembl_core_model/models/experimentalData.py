@@ -6,7 +6,8 @@ from chembl_core_db.db.models.abstractModel import ChemblCoreAbstractModel
 from chembl_core_db.db.models.abstractModel import ChemblModelMetaClass
 from django.utils import six
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class AssayType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -16,7 +17,8 @@ class AssayType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class RelationshipType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -26,7 +28,8 @@ class RelationshipType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ConfidenceScoreLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -37,7 +40,8 @@ class ConfidenceScoreLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreA
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class CurationLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -47,7 +51,8 @@ class CurationLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ActivityStdsLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -59,9 +64,10 @@ class ActivityStdsLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     normal_range_max = models.DecimalField(blank=True, null=True, max_digits=24, decimal_places=12, help_text=u"The highest value for this activity type that is likely to be genuine. This is only an approximation, so higher genuine values may exist, but it may be desirable to validate these before using them. For a given standard_type/units, values in the activities table above this threshold are flagged with a data_validity_comment of 'Outside typical range'.")
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("standard_type", "standard_units"),  )
+        unique_together = (("standard_type", "standard_units"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class DataValidityLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -71,10 +77,10 @@ class DataValidityLookup(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class BioassayOntology(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     TERM_TYPE_CHOICES = (
         ('ASSAY_FORMAT', 'ASSAY_FORMAT'),
@@ -98,10 +104,10 @@ class BioassayOntology(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ParameterType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     parameter_type = ChemblCharField(primary_key=True, max_length=40, help_text=u'Short name for the type of parameter associated with an assay')
     description = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Description of the parameter type')
@@ -109,7 +115,8 @@ class ParameterType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -147,7 +154,7 @@ class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     assay_source = ChemblCharField(max_length=50, db_index=True, blank=True, null=True)
     src = models.ForeignKey(Source, help_text=u'Foreign key to source table')
     src_assay_id = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Identifier for the assay in the source database/deposition (e.g., pubchem AID)')
-    chembl = models.ForeignKey(ChemblIdLookup, unique=True, help_text=u'ChEMBL identifier for this assay (for use on web interface etc)')
+    chembl = models.OneToOneField(ChemblIdLookup, help_text=u'ChEMBL identifier for this assay (for use on web interface etc)')
     updated_on = ChemblDateField(blank=True, null=True)
     updated_by = ChemblCharField(max_length=250, blank=True, null=True)
     orig_description = ChemblCharField(max_length=4000, blank=True, null=True)
@@ -171,7 +178,8 @@ class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Activities(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -221,7 +229,8 @@ class Activities(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class AssayParameters(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -231,7 +240,8 @@ class AssayParameters(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
     parameter_value = ChemblCharField(max_length=2000, help_text=u'The value of the particular parameter')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("assay", "parameter_type"),  )
+        unique_together = (("assay", "parameter_type"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 

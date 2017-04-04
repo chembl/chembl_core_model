@@ -5,7 +5,8 @@ from chembl_core_db.db.models.abstractModel import ChemblCoreAbstractModel
 from chembl_core_db.db.models.abstractModel import ChemblModelMetaClass
 from django.utils import six
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Source(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -16,7 +17,8 @@ class Source(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Journals(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -33,7 +35,8 @@ class Journals(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -55,7 +58,7 @@ class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     updated_on = ChemblDateField(blank=True, null=True)
     updated_by = ChemblCharField(max_length=100, blank=True, null=True)
     doi = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Digital object identifier for this reference')
-    chembl = models.ForeignKey(ChemblIdLookup, unique=True, blank=True, null=False, help_text=u'ChEMBL identifier for this document (for use on web interface etc)') # This combination of null and blank is actually very important!
+    chembl = models.OneToOneField(ChemblIdLookup, blank=True, null=False, help_text=u'ChEMBL identifier for this document (for use on web interface etc)') # This combination of null and blank is actually very important!
     title = ChemblCharField(max_length=500, blank=True, null=True, help_text=u'Document title (e.g., Publication title or description of dataset)')
     doc_type = ChemblCharField(max_length=50, choices=DOC_TYPE_CHOICES, help_text=u'Type of the document (e.g., Publication, Deposited dataset)')
     authors = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'For a deposited dataset, the authors carrying out the screening and/or submitting the dataset.')
@@ -66,7 +69,8 @@ class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class JournalArticles(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -95,12 +99,13 @@ class JournalArticles(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class PaperSimilarityVw(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
-    doc_1 = models.ForeignKey(Docs, help_text=u'Foreign key to documents table', db_column='doc_id1', related_name='to', primary_key=True)
-    doc_2 = models.ForeignKey(Docs, help_text=u'Foreign key to documents table', db_column='doc_id2', related_name='from')
+    doc_1 = models.OneToOneField(Docs, help_text=u'Foreign key to documents table', db_column='doc_id1', related_name=u'to', primary_key=True)
+    doc_2 = models.ForeignKey(Docs, help_text=u'Foreign key to documents table', db_column='doc_id2', related_name=u'fro')
     pubmed_id1 = ChemblPositiveIntegerField(length=12, blank=True, null=True)
     pubmed_id2 = ChemblPositiveIntegerField(length=12, blank=True, null=True)
     tid_tani = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
@@ -111,18 +116,20 @@ class PaperSimilarityVw(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class DocumentTerms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     id = ChemblAutoField(primary_key=True, length=11)
     term = ChemblCharField(max_length=500)
-    documents = models.ManyToManyField('Docs', through="Doc2Term", null=True, blank=True)
+    documents = models.ManyToManyField('Docs', through="Doc2Term", blank=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class Doc2Term(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -134,4 +141,5 @@ class Doc2Term(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("doc", "term"),  )
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+

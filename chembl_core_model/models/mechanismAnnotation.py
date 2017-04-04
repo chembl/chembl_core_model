@@ -7,7 +7,8 @@ from chembl_core_db.db.models.abstractModel import ChemblCoreAbstractModel
 from chembl_core_db.db.models.abstractModel import ChemblModelMetaClass
 from django.utils import six
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ActionType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -18,16 +19,15 @@ class ActionType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class DrugMechanism(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     CURATION_STATUS_CHOICES = (
         ('COMPLETE', 'COMPLETE'),
         ('PARTIAL', 'PARTIAL'),
         )
-
 
     mec_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key for each drug mechanism of action')
     record = models.ForeignKey(CompoundRecords, help_text=u'Record_id for the drug (foreign key to compound_records table)')
@@ -53,10 +53,10 @@ class DrugMechanism(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class DrugIndication(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     MAX_PHASE_FOR_IND_CHOICES = (
         (0, '0'),
@@ -78,7 +78,8 @@ class DrugIndication(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("record", "mesh_id", "efo_id"),  )
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class LigandEff(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -91,7 +92,8 @@ class LigandEff(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class PredictedBindingDomains(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -116,10 +118,10 @@ class PredictedBindingDomains(six.with_metaclass(ChemblModelMetaClass, ChemblCor
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class MechanismRefs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     REF_TYPE_CHOICES = (
         ('ISBN', 'ISBN'),
@@ -149,12 +151,12 @@ class MechanismRefs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     downgrade_reason = ChemblCharField(max_length=4000, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("mechanism", "ref_type", "ref_id"),  )
+        unique_together = (("mechanism", "ref_type", "ref_id"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class IndicationRefs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     REF_TYPE_CHOICES = (
         ('ATC', 'ATC'),
@@ -170,8 +172,8 @@ class IndicationRefs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     ref_url = ChemblCharField(max_length=4000, help_text=u'Full URL linking to the reference')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        pass #unique_together = ( ("drug_indication", "ref_type", "ref_id"),  )
+        pass # unique_together = (("drug_indication", "ref_type", "ref_id"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 

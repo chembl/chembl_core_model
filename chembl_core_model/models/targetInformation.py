@@ -7,7 +7,8 @@ from chembl_core_db.db.models.abstractModel import ChemblCoreAbstractModel
 from chembl_core_db.db.models.abstractModel import ChemblModelMetaClass
 from django.utils import six
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class TargetType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -18,7 +19,8 @@ class TargetType(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class OrganismClass(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -31,7 +33,8 @@ class OrganismClass(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ProteinFamilyClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -47,9 +50,10 @@ class ProteinFamilyClassification(six.with_metaclass(ChemblModelMetaClass, Chemb
     l8 = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'Eighth level classification.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8"),  )
+        unique_together = (("l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ProteinClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -75,15 +79,15 @@ class ProteinClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreA
     replaced_by = ChemblPositiveIntegerField(length=9, blank=True, null=True)
     class_level = ChemblPositiveIntegerField(length=9, choices=CLASS_LEVEL_CHOICES, help_text=u'Level of the class within the hierarchy (level 1 = top level classification)')
     sort_order = ChemblPositiveIntegerField(length=2, blank=True, null=True)
-    component_sequences = models.ManyToManyField('ComponentSequences', through="ComponentClass", null=True, blank=True)
+    component_sequences = models.ManyToManyField('ComponentSequences', through="ComponentClass", blank=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class GoClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     ASPECT_CHOICES = (
         ('C', 'C'),
@@ -112,7 +116,8 @@ class GoClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -145,10 +150,10 @@ class ComponentSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class VariantSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     ISOFORM_CHOICES = (
         (1, '1'),
@@ -173,13 +178,13 @@ class VariantSequences(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     organism = ChemblCharField(max_length=200, blank=True, null=True, help_text=u'Organism from which the sequence was obtained.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        #unique_together = ( ("mutation", "accession"),  )
+        # unique_together = (("mutation", "accession"),)
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class TargetDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     TARGET_PARENT_TYPE_CHOICES = (
         ('MOLECULAR', 'MOLECULAR'),
@@ -206,42 +211,24 @@ class TargetDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
-class TargetPredictions10Um(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+class TargetPredictions(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
-
-    pred_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Unique ID for the prediction')
-    parent_molregno = ChemblPositiveIntegerField(length=38)
-    chembl_id = ChemblCharField(max_length=20, blank=True, null=True)
+    pred_id = ChemblAutoField(primary_key=True, length=11, help_text=u'Unique ID for the prediction')
+    molecule = models.ForeignKey('MoleculeDictionary', db_column='parent_molregno', help_text=u'Foreign key to the molecule_dictionary, indicating the molecule to which the predictions belong.')
+    molecule_chembl_id = ChemblCharField(max_length=20, db_column='chembl_id', blank=True, null=True)
     target = models.ForeignKey(TargetDictionary, db_column='tid', help_text=u'Foreign key to the target_dictionary, indicating the target to which the predictions belong.')
-    target_chembl_id = ChemblCharField(max_length=20, blank=True, null=True)
-    target_accession = ChemblCharField(max_length=20, blank=True, null=True)
-    probability = ChemblNoLimitDecimalField(blank=True, null=True)
-    in_training = ChemblCharField(max_length=20, blank=True, null=True)
+    target_chembl_id = ChemblCharField(max_length=60)
+    target_accession = ChemblCharField(max_length=60)
+    probability = ChemblPositiveDecimalField(max_digits=12, decimal_places=11)
+    in_training = ChemblCharField(max_length=60)
+    value = ChemblPositiveIntegerField(length=5)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
-
-class TargetPredictions1Um(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
-
-    pred_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Unique ID for the prediction')
-    parent_molregno = ChemblPositiveIntegerField(length=38)
-    chembl_id = ChemblCharField(max_length=20, blank=True, null=True)
-    target = models.ForeignKey(TargetDictionary, db_column='tid', help_text=u'Foreign key to the target_dictionary, indicating the target to which the predictions belong.')
-    target_chembl_id = ChemblCharField(max_length=20, blank=True, null=True)
-    target_accession = ChemblCharField(max_length=20, blank=True, null=True)
-    probability = ChemblNoLimitDecimalField(blank=True, null=True)
-    in_training = ChemblCharField(max_length=20, blank=True, null=True)
-
-    class Meta(ChemblCoreAbstractModel.Meta):
-        pass
-
-#-----------------------------------------------------------------------------------------------------------------------
-
+# ----------------------------------------------------------------------------------------------------------------------
 
 class ComponentClass(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -250,9 +237,10 @@ class ComponentClass(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     comp_class_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("component", "protein_class"),  )
+        unique_together = (("component", "protein_class"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ComponentSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -271,9 +259,10 @@ class ComponentSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
     syn_type = ChemblCharField(max_length=20, blank=True, null=True, choices=SYN_TYPE_CHOICES, help_text=u'The type or origin of the synonym (e.g., GENE_SYMBOL).')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("component", "component_synonym", "syn_type"),  )
+        unique_together = (("component", "component_synonym", "syn_type"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class CellDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -288,12 +277,13 @@ class CellDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     cellosaurus_id = ChemblCharField(max_length=15, blank=True, null=True, help_text=u'ID for the corresponding cell line in Cellosaurus Ontology')
     downgraded = ChemblNullableBooleanField(default=False, help_text=u'Indicates the cell line has been removed (if set to 1)')
     cl_lincs_id = ChemblCharField(max_length=8, blank=True, null=True, help_text=u'Cell ID used in LINCS (Library of Integrated Network-based Cellular Signatures)')
-    chembl = models.ForeignKey(ChemblIdLookup, unique=True, blank=True, null=True, help_text=u'ChEMBL identifier for the cell (used in web interface etc)')
+    chembl = models.OneToOneField(ChemblIdLookup, blank=True, null=True, help_text=u'ChEMBL identifier for the cell (used in web interface etc)')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("cell_name", "cell_source_tax_id"),  )
+        unique_together = (("cell_name", "cell_source_tax_id"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ProteinClassSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -311,9 +301,10 @@ class ProteinClassSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
     syn_type = ChemblCharField(max_length=20, blank=True, null=True, choices=SYN_TYPE_CHOICES, help_text=u'The type or origin of the synonym (e.g., ChEMBL, Concept Wiki, UMLS).')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        pass #unique_together = ( ("protein_class", "protein_class_synonym", "syn_type"),  )
+        pass # unique_together = ( ("protein_class", "protein_class_synonym", "syn_type"),  )
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class TissueDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -321,26 +312,27 @@ class TissueDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     uberon_id = ChemblCharField(max_length=15, blank=True, null=True, help_text=u'Uberon ontology identifier for this tissue.')
     pref_name = ChemblCharField(max_length=200, help_text=u'Name for the tissue (in most cases Uberon name).')
     efo_id = ChemblCharField(max_length=20, blank=True, null=True, help_text=u'Experimental Factor Ontology identifier for the tissue.')
-    chembl = models.ForeignKey(ChemblIdLookup, unique=True, help_text=u'ChEMBL identifier for this tissue (for use on web interface etc)')
+    chembl = models.OneToOneField(ChemblIdLookup, help_text=u'ChEMBL identifier for this tissue (for use on web interface etc)')
     bto_id = ChemblCharField(max_length=20, blank=True, null=True, help_text=u'BRENDA Tissue Ontology identifier for the tissue.')
     caloha_id = ChemblCharField(max_length=7, blank=True, null=True, help_text=u'Swiss Institute for Bioinformatics CALOHA Ontology identifier for the tissue.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("uberon_id", "efo_id"),  )
+        unique_together = (("uberon_id", "efo_id"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class ComponentGo(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
 
     comp_go_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key')
     component = models.ForeignKey(ComponentSequences, help_text=u'Foreign key to COMPONENT_SEQUENCES table. The protein component this GO term applies to')
     go = models.ForeignKey(GoClassification, help_text=u'Foreign key to the GO_CLASSIFICATION table. The GO term that this protein is mapped to')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("component", "go"),  )
+        unique_together = (("component", "go"),)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class TargetComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -380,7 +372,8 @@ class TargetComponents(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 class TargetRelations(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
@@ -391,13 +384,14 @@ class TargetRelations(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
         ('SUPERSET OF', 'SUPERSET OF'),
         )
 
-    target = models.ForeignKey(TargetDictionary, related_name='to', db_column='tid', help_text=u'Identifier for target of interest (foreign key to target_dictionary table)')
+    target = models.ForeignKey(TargetDictionary, related_name=u'to', db_column='tid', help_text=u'Identifier for target of interest (foreign key to target_dictionary table)')
     relationship = ChemblCharField(max_length=20, choices=RELATIONSHIP_CHOICES, help_text=u'Relationship between two targets (e.g., SUBSET OF, SUPERSET OF, OVERLAPS WITH)')
-    related_target = models.ForeignKey(TargetDictionary, related_name='from', db_column='related_tid', help_text=u'Identifier for the target that is related to the target of interest (foreign key to target_dicitionary table)')
+    related_target = models.ForeignKey(TargetDictionary, related_name=u'fro', db_column='related_tid', help_text=u'Identifier for the target that is related to the target of interest (foreign key to target_dicitionary table)')
     targrel_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
 
