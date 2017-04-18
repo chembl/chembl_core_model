@@ -136,7 +136,7 @@ class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     assay_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Unique ID for the assay')
     doc = models.ForeignKey(Docs, help_text=u'Foreign key to documents table')
-    description = ChemblCharField(max_length=4000, db_index=True, blank=True, null=True, help_text=u'Description of the reported assay')
+    description = ChemblIndexedCharField(max_length=4000, db_index=True, blank=True, null=True, help_text=u'Description of the reported assay')
     assay_type = models.ForeignKey(AssayType, blank=True, null=True, db_column='assay_type', help_text=u'Assay classification, e.g. B=Binding assay, A=ADME assay, F=Functional assay')
     assay_test_type = ChemblCharField(max_length=20, blank=True, null=True, choices=ASSAY_TEST_TYPE_CHOICES, help_text=u'Type of assay system (i.e., in vivo or in vitro)')
     assay_category = ChemblCharField(max_length=20, blank=True, null=True, choices=ASSAY_CATEGORY_CHOICES, help_text=u'screening, confirmatory (ie: dose-response), summary, panel or other.')
