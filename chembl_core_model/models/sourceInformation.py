@@ -57,7 +57,7 @@ class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     pubmed_id = ChemblPositiveIntegerField(length=11, unique=True, blank=True, null=True, help_text=u'NIH pubmed record ID, where available')
     updated_on = ChemblDateField(blank=True, null=True)
     updated_by = ChemblCharField(max_length=100, blank=True, null=True)
-    doi = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Digital object identifier for this reference')
+    doi = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'Digital object identifier for this reference')
     chembl = models.OneToOneField(ChemblIdLookup, blank=True, null=False, help_text=u'ChEMBL identifier for this document (for use on web interface etc)') # This combination of null and blank is actually very important!
     title = ChemblCharField(max_length=500, blank=True, null=True, help_text=u'Document title (e.g., Publication title or description of dataset)')
     doc_type = ChemblCharField(max_length=50, choices=DOC_TYPE_CHOICES, help_text=u'Type of the document (e.g., Publication, Deposited dataset)')
@@ -72,39 +72,10 @@ class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-class JournalArticles(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+class PaperSimilarity(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
-    int_pk = ChemblAutoField(primary_key=True, length=9)
-    journal = models.ForeignKey(Journals)
-    volume = ChemblPositiveIntegerField(length=5, db_index=True, blank=True, null=True)
-    issue = ChemblPositiveIntegerField(length=5, db_index=True, blank=True, null=True)
-    year = ChemblPositiveIntegerField(length=4, db_index=True, blank=True, null=True)
-    month = ChemblPositiveIntegerField(length=2, db_index=True, blank=True, null=True)
-    day = ChemblPositiveIntegerField(length=2, db_index=True, blank=True, null=True)
-    pagination = ChemblCharField(max_length=50, db_index=True, blank=True, null=True)
-    first_page = ChemblCharField(max_length=50, db_index=True, blank=True, null=True)
-    last_page = ChemblCharField(max_length=50, db_index=True, blank=True, null=True)
-    pubmed_id = ChemblPositiveIntegerField(length=11, db_index=True, blank=True, null=True)
-    doi = ChemblCharField(max_length=50, blank=True, null=True)
-    title = ChemblTextField(blank=True, null=True)
-    abstract = ChemblTextField(blank=True, null=True)
-    authors = ChemblTextField(blank=True, null=True)
-    year_raw = ChemblCharField(max_length=50, blank=True, null=True)
-    month_raw = ChemblCharField(max_length=50, blank=True, null=True)
-    day_raw = ChemblCharField(max_length=50, blank=True, null=True)
-    volume_raw = ChemblCharField(max_length=50, blank=True, null=True)
-    issue_raw = ChemblCharField(max_length=50, blank=True, null=True)
-    date_loaded = ChemblDateField(blank=True, null=True)
-
-    class Meta(ChemblCoreAbstractModel.Meta):
-        pass
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-
-class PaperSimilarityVw(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
-
-    doc_1 = models.OneToOneField(Docs, help_text=u'Foreign key to documents table', db_column='doc_id1', related_name=u'to', primary_key=True)
+    sim_id = ChemblAutoField(primary_key=True, length=9)
+    doc_1 = models.OneToOneField(Docs, help_text=u'Foreign key to documents table', db_column='doc_id1', related_name=u'to')
     doc_2 = models.ForeignKey(Docs, help_text=u'Foreign key to documents table', db_column='doc_id2', related_name=u'fro')
     pubmed_id1 = ChemblPositiveIntegerField(length=12, blank=True, null=True)
     pubmed_id2 = ChemblPositiveIntegerField(length=12, blank=True, null=True)
@@ -117,7 +88,6 @@ class PaperSimilarityVw(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
         pass
 
 # ----------------------------------------------------------------------------------------------------------------------
-
 
 class DocumentTerms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 

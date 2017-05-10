@@ -33,31 +33,11 @@ class MoleculeBrowseDrugs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbs
         (2, 2),
         )
 
-    AVAILABILITY_TYPE_TEXT_CHOICES = (
-        ('Discontinued', 'Discontinued'),
-        ('Over-The-Counter', 'Over-The-Counter'),
-        ('Prescription-only', 'Prescription-only'),
-        ('Unknown', 'Unknown'),
-        ('Withdrawn', 'Withdrawn'),
-        )
-
-    FLAG_TEXT_CHOICES = (
-        ('N', 'N'),
-        ('Y', 'Y'),
-        )
-
     CHIRALITY_CHOICES = (
         (-1, -1),
         (0, 0),
         (1, 1),
         (2, 2),
-        )
-
-    CHIRALITY_TEXT_CHOICES = (
-        ('Achiral Molecule', 'Achiral Molecule'),
-        ('Racemic Mixture', 'Racemic Mixture'),
-        ('Single Stereoisomer', 'Single Stereoisomer'),
-        ('Unknown', 'Unknown'),
         )
 
     DEVELOPMENT_PHASE_CHOICES = (
@@ -88,22 +68,12 @@ class MoleculeBrowseDrugs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbs
     topical = ChemblNullableBooleanField()
     black_box = ChemblNullableBooleanField()
     availability_type = ChemblIntegerField(length=1, blank=True, null=True, choices=AVAILABILITY_TYPE_CHOICES)
-    drug_type_text = ChemblCharField(max_length=300, blank=True, null=True)
-    rule_of_five_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
-    first_in_class_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
-    chirality_text = ChemblCharField(max_length=120, blank=True, null=True, choices=CHIRALITY_TEXT_CHOICES)
-    prodrug_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
-    oral_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
-    parenteral_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
-    topical_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
-    black_box_text = ChemblCharField(max_length=60, blank=True, null=True, choices=FLAG_TEXT_CHOICES)
-    availability_type_text = ChemblCharField(max_length=60, blank=True, null=True, choices=AVAILABILITY_TYPE_TEXT_CHOICES)
     usan_stem_definition = ChemblCharField(max_length=2000, blank=True, null=True)
     indication_class = ChemblCharField(max_length=2000, blank=True, null=True)
     usan_stem_substem = ChemblCharField(max_length=300, blank=True, null=True)
     atc_code_description = ChemblCharField(max_length=2000, blank=True, null=True)
-    ob_patent_no = ChemblCharField(max_length=120, blank=True, null=True)
-    sc_patent_no = ChemblCharField(max_length=180, blank=True, null=True)
+    ob_patent = ChemblCharField(max_length=120, blank=True, null=True)
+    sc_patent = ChemblCharField(max_length=180, blank=True, null=True)
     withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
     withdrawn_country = ChemblCharField(max_length=2000, blank=True, null=True)
     withdrawn_reason = ChemblCharField(max_length=2000, blank=True, null=True)
@@ -401,6 +371,7 @@ class CompoundRecords(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
     removed = ChemblNullBooleanField(default=0)
     src_compound_id_version = ChemblPositiveIntegerField(length=3, blank=True, null=True, choices=SRC_COMPOUND_ID_VERSION_CHOICES)
     curated = ChemblBooleanField(default=False, help_text=u'Can be marked as curated if the entry has been mapped to a molregno other than that given by the original structure, and hence care should be taken when updating')
+    load_date = ChemblDateField(blank=True, null=True, default=datetime.date.today)
     products = models.ManyToManyField('Products', through="Formulations", blank=True)
     assays = models.ManyToManyField('Assays', through="Activities", blank=True)
 
@@ -574,7 +545,6 @@ class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
 
     record = models.OneToOneField(CompoundRecords, primary_key=True)
     max_phase = ChemblPositiveIntegerField(length=1, db_index=True, default=0, choices=MAX_PHASE_CHOICES, help_text=u'Maximum phase of development reached for the compound (4 = approved). Null where max phase has not yet been assigned.')
-    withdrawn_status = ChemblCharField(max_length=10, blank=True, null=True)
     molecule_type = ChemblCharField(max_length=30, blank=True, null=True, choices=MOLECULE_TYPE_CHOICES, help_text=u'Type of molecule (Small molecule, Protein, Antibody, Oligosaccharide, Oligonucleotide, Cell, Unknown)')
     first_approval = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'Earliest known approval year for the molecule') # TODO: should be date!
     oral = ChemblNullableBooleanField(default=False, help_text=u'Indicates whether the drug is known to be administered orally.')

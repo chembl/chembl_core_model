@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='chembl-core-model',
-    version='0.9.20',
+    version='0.9.21',
     author='Michal Nowotka',
     author_email='mnowotka@ebi.ac.uk',
     description='Core ChEMBL python ORM model',
@@ -22,7 +22,7 @@ setup(
               'chembl_core_model.models'],
     long_description=open('README.rst').read(),
     install_requires=[
-        'chembl-core-db>=0.9.20',
+        'chembl-core-db>=0.9.21',
         'pyyaml',
     ],
     package_data={

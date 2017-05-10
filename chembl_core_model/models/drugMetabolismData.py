@@ -46,6 +46,7 @@ class MetabolismRefs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     REF_TYPE_CHOICES = (
         ('DAILYMED', 'DAILYMED'),
         ('DOI', 'DOI'),
+        ('DailyMed', 'DailyMed'),
         ('FDA', 'FDA'),
         ('ISBN', 'ISBN'),
         ('OTHER', 'OTHER'),

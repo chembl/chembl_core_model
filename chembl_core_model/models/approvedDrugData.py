@@ -56,7 +56,6 @@ class AtcClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
     level3 = ChemblCharField(max_length=10, blank=True, null=True, help_text=u'Third level of classification')
     level4 = ChemblCharField(max_length=10, blank=True, null=True, help_text=u'Fourth level of classification')
     level5 = ChemblCharField(primary_key=True, max_length=10, help_text=u'Complete ATC code for compound')
-    who_id = ChemblCharField(max_length=15, blank=True, null=True, help_text=u'WHO Identifier for compound')
     level1_description = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Description of first level of classification')
     level2_description = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Description of second level of classification')
     level3_description = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Description of third level of classification')
