@@ -129,6 +129,7 @@ class MechanismRefs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
         ('DOI', 'DOI'),
         ('EMA', 'EMA'),
         ('PubMed', 'PubMed'),
+        ('Patent', 'Patent'),
         ('USPO', 'USPO'),
         ('DailyMed', 'DailyMed'),
         ('FDA', 'FDA'),

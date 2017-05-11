@@ -205,9 +205,9 @@ class DefinedDailyDose(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
 
     atc_code = models.ForeignKey(AtcClassification, db_column='atc_code', help_text=u'ATC code for the compound (foreign key to ATC_CLASSIFICATION table)')
     ddd_value = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'Value of defined daily dose')
-    ddd_units = ChemblCharField(max_length=20, blank=True, null=True, choices=DDD_UNITS_CHOICES, help_text=u'Units of defined daily dose')
-    ddd_admr = ChemblCharField(max_length=30, blank=True, null=True, help_text=u'Administration route for dose')
-    ddd_comment = ChemblCharField(max_length=400, blank=True, null=True, help_text=u'Comment')
+    ddd_units = ChemblCharField(max_length=200, blank=True, null=True, choices=DDD_UNITS_CHOICES, help_text=u'Units of defined daily dose')
+    ddd_admr = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Administration route for dose')
+    ddd_comment = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Comment')
     ddd_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Internal primary key')
 
     class Meta(ChemblCoreAbstractModel.Meta):
@@ -265,7 +265,7 @@ class MoleculeFracClassification(six.with_metaclass(ChemblModelMetaClass, Chembl
     molecule = models.ForeignKey(MoleculeDictionary, db_column='molregno', help_text=u'Foreign key to molecule_dictionary, showing the compound to which the classification applies.')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = ( ("frac_class", "molecule"),  )
+        unique_together = (("frac_class", "molecule"),)
 
 # ----------------------------------------------------------------------------------------------------------------------
 
