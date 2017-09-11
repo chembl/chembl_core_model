@@ -36,6 +36,18 @@ class OrganismClass(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractM
 # ----------------------------------------------------------------------------------------------------------------------
 
 
+class OrganismSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    tax = models.ForeignKey(OrganismClass, primary_key=True, to_field='tax_id', help_text=u'NCBI tax_id for organism')
+    synonyms = ChemblCharField(max_length=3000, help_text=u'Synonyms for this NCBI tax_id')
+    source = ChemblCharField(max_length=600, help_text=u'The name of the source of this synonym')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        unique_together = (("tax", "synonyms", "source"),)
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
 class ProteinFamilyClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     protein_class_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key. Unique identifier for each classification.')
