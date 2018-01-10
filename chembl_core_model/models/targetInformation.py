@@ -407,3 +407,17 @@ class TargetRelations(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
 # ----------------------------------------------------------------------------------------------------------------------
 
 
+class TargetXref(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    target = models.ForeignKey(TargetDictionary, db_column='tid', help_text=u'Foreign key to target_dictionary table')
+    xref_src_db = models.ForeignKey(XrefSource, db_column='xref_src_db', help_text=u'Name of the database that this cross-reference links to')
+    xref_id = ChemblCharField(max_length=300, unique=True, help_text=u'Identifier for the entry in the cross-referenced database')
+    xref_name = ChemblCharField(max_length=3000, blank=True, null=True, help_text=u'Name for the entry in the cross-referenced database, where applicable')
+    targ_xref_id = ChemblPositiveIntegerField(primary_key=True, length=9)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+

@@ -8,6 +8,19 @@ from django.utils import six
 # ----------------------------------------------------------------------------------------------------------------------
 
 
+class XrefSource(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    xref_src_db = ChemblCharField(primary_key=True, max_length=60, help_text=u'Name of the source database that is cross-referenced from chembl')
+    xref_src_description = ChemblCharField(max_length=300, blank=True, null=True, help_text=u'Longer description of the source database')
+    xref_src_url = ChemblCharField(max_length=12000, blank=True, null=True, help_text=u'URL for linking to the source database home page')
+    xref_id_url = ChemblCharField(max_length=12000, blank=True, null=True, help_text=u'URL for linking to the source database with a xref_id (substitute id for $$ in url)')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
 class Source(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     src_id = ChemblAutoField(primary_key=True, length=3, help_text=u'Identifier for each source (used in compound_records and assays tables)')

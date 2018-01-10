@@ -377,7 +377,7 @@ class CompoundRecords(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
 
     def __str__(self):
         return 'Compound Record {0} for Molecule {1}, name {2}, key {3}'.format(
-            self.record_id, self.molecule.chembl_id, self.compound_name, self.compound_key)
+            self.record_id, self.molecule.chembl_id if self.molecule else '', self.compound_name, self.compound_key)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -449,6 +449,20 @@ class CompoundStructuralAlerts(six.with_metaclass(ChemblModelMetaClass, ChemblCo
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = ( ("molecule", "alert"),  )
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+class CompoundXref(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    molecule = models.ForeignKey(MoleculeDictionary, db_column='molregno', help_text=u'Foreign key to compounds table')
+    xref_src_db = models.ForeignKey(XrefSource, db_column='xref_src_db', help_text=u'Name of the database that this cross reference links to')
+    xref_id = ChemblCharField(max_length=330, unique=True, help_text=u'Identifier for the entry in the cross-referenced database')
+    xref_name = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Name for the entry in the cross-referenced database, where applicable')
+    cmpd_xref_id = ChemblPositiveIntegerField(primary_key=True, length=9)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
 
 # ----------------------------------------------------------------------------------------------------------------------
 
