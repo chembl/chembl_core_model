@@ -26,6 +26,8 @@ class Source(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     src_id = ChemblAutoField(primary_key=True, length=3, help_text=u'Identifier for each source (used in compound_records and assays tables)')
     src_description = ChemblCharField(max_length=500, blank=True, null=True, help_text=u'Description of the data source')
     src_short_name = ChemblCharField(max_length=20, blank=True, null=True, help_text=u'A short name for each data source, for display purposes')
+    default_doc_id = ChemblPositiveIntegerField(length=38, default=0)
+    default_loadtype = ChemblPositiveIntegerField(length=38, default=0)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -43,7 +45,6 @@ class Journals(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)
     publication_start_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
     nlm_id = ChemblCharField(max_length=15, blank=True, null=True)
     doc_journal = ChemblCharField(max_length=50, blank=True, null=True)
-    core_journal_flag = ChemblNullableBooleanField()
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -78,6 +79,11 @@ class Docs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     abstract = ChemblTextField(blank=True, null=True, help_text=u'For a deposited dataset, a brief description of the dataset.')
     journal_id = models.ForeignKey(Journals, blank=True, null=True, db_column='journal_id')
     patent_id = ChemblCharField(max_length=20, blank=True, null=True, help_text=u'Patent ID for this document')
+    ridx = ChemblCharField(max_length=600, default=u'CLD0', help_text=u'The Depositor Defined Reference Identifier')
+    job_id = ChemblPositiveIntegerField(length=38, default=0, help_text=u'The JOB_ID assigned to this record when first inserted.')
+    log_id = ChemblPositiveIntegerField(length=38, default=0)
+    src_id = ChemblPositiveIntegerField(length=38, default=0, help_text=u'The src_id who owns this document')
+    doi_chembl = ChemblCharField(max_length=600, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
