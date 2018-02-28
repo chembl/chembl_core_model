@@ -292,6 +292,7 @@ class CellDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstract
     downgraded = ChemblNullableBooleanField(default=False, help_text=u'Indicates the cell line has been removed (if set to 1)')
     cl_lincs_id = ChemblCharField(max_length=8, blank=True, null=True, help_text=u'Cell ID used in LINCS (Library of Integrated Network-based Cellular Signatures)')
     chembl = models.OneToOneField(ChemblIdLookup, blank=True, null=True, help_text=u'ChEMBL identifier for the cell (used in web interface etc)')
+    curator_comment = ChemblCharField(max_length=6000, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         unique_together = (("cell_name", "cell_source_tax_id"),)
