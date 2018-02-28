@@ -225,6 +225,7 @@ class TargetDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstra
 
 # ----------------------------------------------------------------------------------------------------------------------
 
+
 class TargetPredictions(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     pred_id = ChemblAutoField(primary_key=True, length=11, help_text=u'Unique ID for the prediction')
@@ -241,6 +242,7 @@ class TargetPredictions(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
         pass
 
 # ----------------------------------------------------------------------------------------------------------------------
+
 
 class ComponentClass(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
