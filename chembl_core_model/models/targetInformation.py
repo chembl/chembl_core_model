@@ -276,6 +276,21 @@ class ComponentSynonyms(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstr
 # ----------------------------------------------------------------------------------------------------------------------
 
 
+class ComponentXref(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    comp_xref_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key.')
+    component = models.ForeignKey(ComponentSequences, help_text=u'Foreign key to component_sequences table.')
+    xref_src_db = ChemblCharField(max_length=150)
+    xref_id = ChemblCharField(max_length=300)
+    xref_name = ChemblCharField(max_length=3000, blank=True, null=True)
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        unique_together = (("component", "xref_src_db", "xref_id"),)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
 class CellDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     cell_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key. Unique identifier for each cell line in the target_dictionary.')
