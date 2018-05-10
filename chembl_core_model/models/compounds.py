@@ -588,7 +588,7 @@ class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
     withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
     withdrawn_country = ChemblCharField(max_length=1000, blank=True, null=True)
     withdrawn_reason = ChemblCharField(max_length=1000, blank=True, null=True)
-    withdrawn_class = ChemblCharField(max_length=1500, blank=True, null=True)
+    withdrawn_class = ChemblCharField(max_length=500, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
