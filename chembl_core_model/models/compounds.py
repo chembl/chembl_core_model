@@ -77,6 +77,7 @@ class MoleculeBrowseDrugs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbs
     withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
     withdrawn_country = ChemblCharField(max_length=2000, blank=True, null=True)
     withdrawn_reason = ChemblCharField(max_length=2000, blank=True, null=True)
+    withdrawn_class = ChemblCharField(max_length=1000, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -253,6 +254,7 @@ class MoleculeDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'Year the drug was first withdrawn in any country')
     withdrawn_country = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'List of countries/regions where the drug has been withdrawn')
     withdrawn_reason = ChemblCharField(max_length=2000, blank=True, null=True, help_text=u'Reasons for withdrawal (e.g., safety)')
+    withdrawn_class = ChemblCharField(max_length=1000, blank=True, null=True)
 
     def __str__(self):
         return 'Molecule {0} ({1}) {2}'.format(self.molregno, self.chembl_id, self.pref_name)
@@ -588,7 +590,7 @@ class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
     withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
     withdrawn_country = ChemblCharField(max_length=1000, blank=True, null=True)
     withdrawn_reason = ChemblCharField(max_length=1000, blank=True, null=True)
-    withdrawn_class = ChemblCharField(max_length=500, blank=True, null=True)
+    withdrawn_class = ChemblCharField(max_length=1000, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
