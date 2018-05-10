@@ -174,6 +174,11 @@ class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     tissue = models.ForeignKey(TissueDictionary, blank=True, null=True, help_text=u'ID for the corresponding tissue/anatomy in Uberon. Foreign key to tissue_dictionary')
     curation_comment = ChemblCharField(max_length=4000, blank=True, null=True, help_text=u'Just for prudence!')
     variant = models.ForeignKey(VariantSequences, blank=True, null=True, help_text=u'Foreign key to variant_sequences table. Indicates the mutant/variant version of the target used in the assay (where known/applicable)')
+    aidx = ChemblCharField(max_length=600, default=u'CLD0', help_text=u'The Depositor Defined Assay Identifier')
+    job_id = ChemblPositiveIntegerField(length=38, default=0, help_text=u'The JOB_ID assigned to this record when first inserted.')
+    log_id = ChemblPositiveIntegerField(length=38, default=0)
+    ridx = ChemblCharField(max_length=600, default=u'CLD0', help_text=u'The Depositor Defined Reference Identifier.')
+    tid_fixed = ChemblIntegerField(length=1, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -225,6 +230,18 @@ class Activities(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractMode
     bao_endpoint = models.ForeignKey(BioassayOntology, blank=True, null=True, db_column='bao_endpoint', help_text=u'ID for the corresponding result type in BioAssay Ontology (based on standard_type)')
     uo_units = ChemblCharField(max_length=10, blank=True, null=True, help_text=u'ID for the corresponding unit in Unit Ontology (based on standard_units)')
     qudt_units = ChemblCharField(max_length=70, blank=True, null=True, help_text=u'ID for the corresponding unit in QUDT Ontology (based on standard_units)')
+    job_id = ChemblPositiveIntegerField(length=38, db_index=True, default=0, help_text=u'The JOB_ID assigned to this record when first inserted.')
+    ridx = ChemblCharField(max_length=600, default=u'CLD0', help_text=u'The Depositor defined Reference Identifier')
+    toid = ChemblPositiveIntegerField(length=38, blank=True, null=True, help_text=u'The Test Occassion Identifier')
+    upper_value = ChemblNoLimitDecimalField(blank=True, null=True, help_text=u'Where the activity is a range, this represents the highest value of the range (numerically), while the PUBLISHED_VALUE column represents the lower value')
+    standard_upper_value = ChemblNoLimitDecimalField(blank=True, null=True, help_text=u'Where the activity is a range, this represents the standardised version of the highest value of the range (with the lower value represented by STANDARD_VALUE)')
+    src = models.ForeignKey(Source, blank=True, null=True, help_text=u'Foreign key to source table, indicating the source of the activity value')
+    type = ChemblCharField(max_length=750, help_text=u'Type of end-point measurement: e.g. IC50, LD50, %inhibition etc, as it appears in the original dataset')
+    relation = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Symbol constraining the activity value (e.g. >, <, =), as it appears in the original dataset')
+    value = ChemblNoLimitDecimalField(blank=True, null=True, help_text=u'Datapoint value as it appears in the original dataset.')
+    units = ChemblCharField(max_length=300, blank=True, null=True, help_text=u'Units of measurement as they appear in the original dataset')
+    text_value = ChemblCharField(max_length=3000, blank=True, null=True, help_text=u'Non-numeric value for measurement as in original dataset')
+    standard_text_value = ChemblCharField(max_length=3000, blank=True, null=True, help_text=u'Standardized version of non-numeric measurement')
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
@@ -236,11 +253,22 @@ class AssayParameters(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
 
     assay_param_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Numeric primary key')
     assay = models.ForeignKey(Assays, help_text=u'Foreign key to assays table. The assay to which this parameter belongs')
-    parameter_type = models.ForeignKey(ParameterType, db_column='parameter_type', help_text=u'Foreign key to parameter_type table, defining the meaning of the parameter')
-    parameter_value = ChemblCharField(max_length=2000, help_text=u'The value of the particular parameter')
+    type = ChemblCharField(max_length=750, help_text=u'The type of parameter being described, according to the original data source')
+    relation = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'The relation symbol for the parameter being described, according to the original data source')
+    value = ChemblNoLimitDecimalField(blank=True, null=True, help_text=u'The value of the parameter being described, according to the original data source. Used for numeric data')
+    units = ChemblCharField(max_length=300, blank=True, null=True, help_text=u'The units for the parameter being described, according to the original data source')
+    text_value = ChemblCharField(max_length=3000, blank=True, null=True, help_text=u'The text value of the parameter being described, according to the original data source. Used for non-numeric/qualitative data')
+    standard_type = ChemblCharField(max_length=750, blank=True, null=True, help_text=u'Standardized form of the TYPE')
+    standard_relation = ChemblCharField(max_length=150, blank=True, null=True, help_text=u'Standardized form of the RELATION')
+    standard_value = ChemblNoLimitDecimalField(blank=True, null=True, help_text=u'Standardized form of the VALUE')
+    standard_units = ChemblCharField(max_length=300, blank=True, null=True, help_text=u'Standardized form of the UNITS')
+    standard_text_value = ChemblCharField(max_length=3000, blank=True, null=True, help_text=u'Standardized form of the TEXT_VALUE')
+    comments = ChemblCharField(max_length=12000, blank=True, null=True, help_text=u'Additional comments describing the parameter')
+    standard_type_fixed = ChemblPositiveIntegerField(length=1, default=0, help_text=u'If set to 1, indicates that the normalized_type has been set manually, and should not be automatically overwritten')
+    active = ChemblPositiveIntegerField(length=1, default=1, help_text=u'If set to 1, indicates that the parameter type is still found in this dataset. 0 is used for parameters that used to be present but are no longer used')
 
     class Meta(ChemblCoreAbstractModel.Meta):
-        unique_together = (("assay", "parameter_type"),)
+        unique_together = (("assay", "type"),)
 
 # ----------------------------------------------------------------------------------------------------------------------
 

@@ -238,7 +238,6 @@ class MoleculeDictionary(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     first_in_class = ChemblNullBooleanField(default=(-1), help_text=u'Indicates whether this is known to be the first compound of its class (e.g., acting on a particular target).')
     chirality = ChemblIntegerField(length=1, default=(-1), choices=CHIRALITY_CHOICES, help_text=u'Shows whether a drug is dosed as a racemic mixture (0), single stereoisomer (1) or is an achiral molecule (2)')
     prodrug = ChemblNullBooleanField(default=(-1), help_text=u'Indicates that the molecule is a pro-drug (see molecule hierarchy for active component, where known)')
-    exclude = ChemblBooleanField(default=False)
     inorganic_flag = ChemblNullBooleanField(default=0, help_text=u'Indicates whether the molecule is inorganic (i.e., containing only metal atoms and <2 carbon atoms)')
     usan_year = ChemblPositiveIntegerField(length=4, blank=True, null=True, help_text=u'The year in which the application for a USAN/INN name was made')
     availability_type = ChemblIntegerField(length=1, blank=True, null=True, choices=AVAILABILITY_TYPE_CHOICES, help_text=u'The availability type for the drug (0 = discontinued, 1 = prescription only, 2 = over the counter)')
@@ -372,6 +371,13 @@ class CompoundRecords(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstrac
     src_compound_id_version = ChemblPositiveIntegerField(length=3, blank=True, null=True, choices=SRC_COMPOUND_ID_VERSION_CHOICES)
     curated = ChemblBooleanField(default=False, help_text=u'Can be marked as curated if the entry has been mapped to a molregno other than that given by the original structure, and hence care should be taken when updating')
     load_date = ChemblDateField(blank=True, null=True, default=datetime.date.today)
+    ridx = ChemblCharField(max_length=600, default=u'CLD0', help_text=u'The Depositor Defined Reference Identifier.')
+    cidx = ChemblCharField(max_length=600, default=u'CLD0', help_text=u'The Depositor Defined Compound Identifier.')
+    job_id = ChemblPositiveIntegerField(length=38, default=0, help_text=u'The JOB_ID assigned to this record when first inserted.')
+    log_id = ChemblPositiveIntegerField(length=38, default=0)
+    molregno_fixed = ChemblIntegerField(length=38, blank=True, null=True, help_text=u"The molregno associated with this record has been fixed by curators: Do not update automatically. null = not fixed. '1' = Fixed")
+    molregno_comment = ChemblCharField(max_length=3000, blank=True, null=True, help_text=u'The reason why this molregno is associated with this record')
+    molregno_sv = ChemblNoLimitDecimalField(blank=True, null=True, help_text=u'The version of the standardizer protocol used')
     products = models.ManyToManyField('Products', through="Formulations", blank=True)
     assays = models.ManyToManyField('Assays', through="Activities", blank=True)
 
@@ -583,6 +589,7 @@ class RecordDrugProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAb
     withdrawn_year = ChemblPositiveIntegerField(length=4, blank=True, null=True)
     withdrawn_country = ChemblCharField(max_length=1000, blank=True, null=True)
     withdrawn_reason = ChemblCharField(max_length=1000, blank=True, null=True)
+    withdrawn_class = ChemblCharField(max_length=1500, blank=True, null=True)
 
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
