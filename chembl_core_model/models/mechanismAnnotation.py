@@ -124,23 +124,22 @@ class PredictedBindingDomains(six.with_metaclass(ChemblModelMetaClass, ChemblCor
 class MechanismRefs(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
 
     REF_TYPE_CHOICES = (
+        ('ClinicalTrials', 'ClinicalTrials'),
+        ('DOI', 'DOI'),
+        ('DailyMed', 'DailyMed'),
+        ('Expert', 'Expert'),
+        ('FDA', 'FDA'),
         ('ISBN', 'ISBN'),
         ('IUPHAR', 'IUPHAR'),
-        ('DOI', 'DOI'),
-        ('EMA', 'EMA'),
-        ('PubMed', 'PubMed'),
-        ('Patent', 'Patent'),
-        ('USPO', 'USPO'),
-        ('DailyMed', 'DailyMed'),
-        ('FDA', 'FDA'),
-        ('Expert', 'Expert'),
-        ('Other', 'Other'),
         ('InterPro', 'InterPro'),
-        ('Wikipedia', 'Wikipedia'),
-        ('UniProt', 'UniProt'),
         ('KEGG', 'KEGG'),
+        ('Other', 'Other'),
         ('PMC', 'PMC'),
-        ('ClinicalTrials', 'ClinicalTrials'),
+        ('Patent', 'Patent'),
+        ('PubChem', 'PubChem'),
+        ('PubMed', 'PubMed'),
+        ('UniProt', 'UniProt'),
+        ('Wikipedia', 'Wikipedia'),
         )
 
     mecref_id = ChemblAutoField(primary_key=True, length=9, help_text=u'Primary key')
