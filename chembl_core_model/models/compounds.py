@@ -329,7 +329,6 @@ class CompoundProperties(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbst
     full_mwt = ChemblPositiveDecimalField(blank=True, null=True, max_digits=9, decimal_places=2, help_text=u'Molecular weight of the full compound including any salts')
     aromatic_rings = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of aromatic rings')
     heavy_atoms = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of heavy (non-hydrogen) atoms')
-    num_alerts = ChemblPositiveIntegerField(length=3, blank=True, null=True, help_text=u'Number of structural alerts for QED calculation (as defined by Brenk et al., ChemMedChem 2008)')
     qed_weighted = ChemblPositiveDecimalField(blank=True, null=True, max_digits=3, decimal_places=2, help_text=u'Weighted quantitative estimate of drug likeness (as defined by Bickerton et al., Nature Chem 2012)')
     updated_on = ChemblDateField(blank=True, null=True, help_text=u'Shows date properties were last recalculated')
     mw_monoisotopic = ChemblPositiveDecimalField(blank=True, null=True, max_digits=11, decimal_places=4, help_text=u'Monoisotopic parent molecular weight')

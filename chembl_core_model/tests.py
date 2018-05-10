@@ -1000,7 +1000,6 @@ class SimpleTest(TestCase):
         self.assertAlmostEqual(compoundProp.mw_monoisotopic, Decimal('383.2460'), 4)
         self.assertEquals(compoundProp.aromatic_rings, 1)
         self.assertEquals(compoundProp.heavy_atoms, 28)
-        self.assertEquals(compoundProp.num_alerts, 2)
         self.assertAlmostEqual(compoundProp.qed_weighted, Decimal('0.46'), 2)
         self.assertEqual(compoundProp.full_molformula, 'C24 H33 N O3')
 
