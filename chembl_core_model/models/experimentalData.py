@@ -183,6 +183,31 @@ class Assays(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
     class Meta(ChemblCoreAbstractModel.Meta):
         pass
 
+
+class AssayClassification(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    assay_class_id = ChemblPositiveIntegerField(primary_key=True, length=9, help_text=u'Primary Key')
+    l1 = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'High level classification e.g., by anatomical/therapeutic area')
+    l2 = ChemblCharField(max_length=100, blank=True, null=True, help_text=u'Mid-level classification e.g., by phenotype/biological process')
+    l3 = ChemblCharField(max_length=1000, blank=True, null=True, help_text=u'Fine-grained classification e.g., by assay type')
+    class_type = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'The type of assay being classified e.g., in vivo efficacy')
+    bao_id = ChemblCharField(max_length=11, blank=True, null=True, help_text=u'BAO ID')
+    source = ChemblCharField(max_length=50, blank=True, null=True, help_text=u'Source')
+    assays = models.ManyToManyField(Assays, through='AssayClassMap')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
+
+class AssayClassMap(six.with_metaclass(ChemblModelMetaClass, ChemblCoreAbstractModel)):
+
+    ass_cls_map_id = ChemblPositiveIntegerField(primary_key=True, length=38, help_text=u'Primary Key')
+    assay = models.ForeignKey(Assays, blank=True, null=True, help_text=u'Foreign key to assay. The Assay of the AssayClassification')
+    assay_class = models.ForeignKey(AssayClassification, blank=True, null=True, help_text=u'Foreign key to assay_classification. The AssayClassification of the Assay')
+
+    class Meta(ChemblCoreAbstractModel.Meta):
+        pass
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 
